@@ -36,7 +36,7 @@ export const Route = createFileRoute("/auth")({
       { property: "og:description", content: description },
     ],
   }),
-  component: AuthPage;
+  component: AuthPage,
 });
 
 const signupSchema = z.object({
