@@ -14,7 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          age: number | null
+          city: string | null
+          created_at: string
+          current_education:
+            | Database["public"]["Enums"]["education_level"]
+            | null
+          full_name: string
+          gender: Database["public"]["Enums"]["gender"] | null
+          id: string
+          phone: string | null
+          preferred_language: Database["public"]["Enums"]["app_language"]
+          state: string | null
+          updated_at: string
+        }
+        Insert: {
+          age?: number | null
+          city?: string | null
+          created_at?: string
+          current_education?:
+            | Database["public"]["Enums"]["education_level"]
+            | null
+          full_name?: string
+          gender?: Database["public"]["Enums"]["gender"] | null
+          id: string
+          phone?: string | null
+          preferred_language?: Database["public"]["Enums"]["app_language"]
+          state?: string | null
+          updated_at?: string
+        }
+        Update: {
+          age?: number | null
+          city?: string | null
+          created_at?: string
+          current_education?:
+            | Database["public"]["Enums"]["education_level"]
+            | null
+          full_name?: string
+          gender?: Database["public"]["Enums"]["gender"] | null
+          id?: string
+          phone?: string | null
+          preferred_language?: Database["public"]["Enums"]["app_language"]
+          state?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +70,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      app_language: "english" | "hindi" | "marathi"
+      education_level:
+        | "class_10"
+        | "class_12"
+        | "diploma"
+        | "graduate"
+        | "post_graduate"
+      gender: "male" | "female" | "other" | "prefer_not_to_say"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +204,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_language: ["english", "hindi", "marathi"],
+      education_level: [
+        "class_10",
+        "class_12",
+        "diploma",
+        "graduate",
+        "post_graduate",
+      ],
+      gender: ["male", "female", "other", "prefer_not_to_say"],
+    },
   },
 } as const
