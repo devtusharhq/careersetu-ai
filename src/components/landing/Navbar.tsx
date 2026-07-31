@@ -60,11 +60,18 @@ export function Navbar() {
 
         <div className="ml-auto flex items-center gap-2 md:ml-0">
           <ThemeToggle />
-          <Button variant="ghost" className="hidden sm:inline-flex">
-            Log in
+          <Button variant="ghost" className="hidden sm:inline-flex" asChild>
+            <Link to="/auth" search={{ mode: "login" }}>
+              Log in
+            </Link>
           </Button>
-          <Button className="gradient-brand hidden text-primary-foreground shadow-glow hover:opacity-90 sm:inline-flex">
-            Get started
+          <Button
+            className="gradient-brand hidden text-primary-foreground shadow-glow hover:opacity-90 sm:inline-flex"
+            asChild
+          >
+            <Link to="/auth" search={{ mode: "signup" }}>
+              Get started
+            </Link>
           </Button>
 
           <Sheet>
@@ -84,10 +91,16 @@ export function Navbar() {
                     {l.label}
                   </a>
                 ))}
-                <Button variant="outline" className="mt-4">
-                  Log in
+                <Button variant="outline" className="mt-4" asChild>
+                  <Link to="/auth" search={{ mode: "login" }}>
+                    Log in
+                  </Link>
                 </Button>
-                <Button className="gradient-brand text-primary-foreground">Get started</Button>
+                <Button className="gradient-brand text-primary-foreground" asChild>
+                  <Link to="/auth" search={{ mode: "signup" }}>
+                    Get started
+                  </Link>
+                </Button>
               </nav>
             </SheetContent>
           </Sheet>
