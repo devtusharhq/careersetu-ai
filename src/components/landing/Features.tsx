@@ -92,7 +92,7 @@ export function Features() {
 
       <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {features.map((f) => (
-          <Card key={f.title} className="hover-lift glass rounded-2xl p-6">
+          <Card key={f.title} className="hover-lift glass arch-accent overflow-hidden rounded-[1.25rem] p-6">
             <span className="gradient-brand grid size-11 place-items-center rounded-xl text-primary-foreground shadow-glow">
               <f.icon className="size-5" />
             </span>
