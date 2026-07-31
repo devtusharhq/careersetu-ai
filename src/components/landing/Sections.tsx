@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Compass, Quote } from "lucide-react";
 
 import {
@@ -118,8 +119,9 @@ export function CtaBand() {
           size="lg"
           variant="secondary"
           className="mt-8 h-12 rounded-xl px-7 text-base font-semibold"
+          asChild
         >
-          Start Career Assessment
+          <Link to="/auth" search={{ mode: "signup" }}>Start Career Assessment</Link>
         </Button>
       </div>
     </section>

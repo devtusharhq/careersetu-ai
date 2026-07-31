@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { ArrowRight, Compass, Sparkles, Star } from "lucide-react";
 
 import heroImage from "@/assets/hero-career.png";
@@ -32,9 +33,12 @@ export function Hero() {
             <Button
               size="lg"
               className="gradient-brand h-12 rounded-xl px-6 text-base text-primary-foreground shadow-glow transition-opacity hover:opacity-90"
+              asChild
             >
-              Start Career Assessment
-              <ArrowRight className="ml-1 size-5" />
+              <Link to="/auth" search={{ mode: "signup" }}>
+                Start Career Assessment
+                <ArrowRight className="ml-1 size-5" />
+              </Link>
             </Button>
             <Button
               size="lg"
