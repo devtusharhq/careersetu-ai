@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
-import { Compass, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -143,11 +144,8 @@ function AuthPage() {
   return (
     <div className="gradient-soft min-h-dvh px-4 py-10">
       <div className="mx-auto max-w-lg">
-        <Link to="/" className="mb-8 flex items-center justify-center gap-2">
-          <span className="gradient-brand grid size-9 place-items-center rounded-xl text-primary-foreground shadow-glow">
-            <Compass className="size-5" />
-          </span>
-          <span className="font-display text-xl font-bold">CareerSetu</span>
+        <Link to="/" className="mb-8 flex justify-center" aria-label="CareerSetu home">
+          <Logo size="lg" />
         </Link>
 
         <Card className="glass rounded-3xl p-6 sm:p-8">

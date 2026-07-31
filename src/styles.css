@@ -250,6 +250,46 @@
   }
 }
 
+/* Blueprint grid: signature backdrop texture (a "bridge plan" feel). */
+@utility blueprint-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--primary) 12%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--primary) 12%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%);
+}
+
+/* Fine film grain to keep large gradient areas from looking flat. */
+@utility grain {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
+  }
+}
+
+/* Arched top edge — echoes the bridge in the logo. */
+@utility arch-accent {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 62%;
+    height: 3px;
+    translate: -50% -1px;
+    border-radius: 999px;
+    background-image: var(--gradient-brand);
+    opacity: 0.9;
+  }
+}
+
+
 @keyframes float-slow {
   0%,
   100% {

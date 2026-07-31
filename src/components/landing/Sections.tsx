@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Compass, Quote } from "lucide-react";
+import { Quote } from "lucide-react";
 
 import {
   Accordion,
@@ -7,6 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -108,7 +109,7 @@ export function Faq() {
 export function CtaBand() {
   return (
     <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
-      <div className="gradient-brand shadow-elegant rounded-3xl px-6 py-14 text-center sm:px-12">
+      <div className="gradient-brand shadow-elegant grain overflow-hidden rounded-[2rem] px-6 py-14 text-center sm:px-12">
         <h2 className="text-3xl font-bold text-primary-foreground sm:text-4xl">
           Your career deserves a plan, not a guess
         </h2>
@@ -139,12 +140,7 @@ export function Footer() {
     <footer className="border-t border-border bg-card/60">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.4fr_repeat(3,1fr)]">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="gradient-brand grid size-9 place-items-center rounded-xl text-primary-foreground">
-              <Compass className="size-5" />
-            </span>
-            <span className="font-display text-lg font-bold">CareerSetu</span>
-          </div>
+          <Logo />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
             AI career and government exam guidance built for Indian students — from Class 10 to Post
             Graduation.

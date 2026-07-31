@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Compass, Menu, Moon, Sun } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -39,11 +40,8 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full">
       <div className="glass mx-auto mt-3 flex max-w-6xl items-center gap-4 rounded-2xl px-4 py-3 sm:px-6">
-        <Link to="/" className="flex min-w-0 items-center gap-2">
-          <span className="gradient-brand grid size-9 shrink-0 place-items-center rounded-xl text-primary-foreground shadow-glow">
-            <Compass className="size-5" />
-          </span>
-          <span className="truncate font-display text-lg font-bold">CareerSetu</span>
+        <Link to="/" aria-label="CareerSetu home">
+          <Logo />
         </Link>
 
         <nav className="ml-auto hidden items-center gap-1 md:flex">
