@@ -109,7 +109,7 @@ export function Faq() {
 export function CtaBand() {
   return (
     <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
-      <div className="gradient-brand shadow-elegant rounded-3xl px-6 py-14 text-center sm:px-12">
+      <div className="gradient-brand shadow-elegant grain overflow-hidden rounded-[2rem] px-6 py-14 text-center sm:px-12">
         <h2 className="text-3xl font-bold text-primary-foreground sm:text-4xl">
           Your career deserves a plan, not a guess
         </h2>

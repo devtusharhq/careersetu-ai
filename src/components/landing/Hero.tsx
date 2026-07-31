@@ -10,6 +10,7 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden">
       <div className="gradient-soft absolute inset-0 -z-10" />
+      <div className="blueprint-grid absolute inset-0 -z-10" />
       <div className="absolute -top-32 left-1/4 -z-10 size-[28rem] rounded-full bg-primary/20 blur-3xl" />
       <div className="absolute -right-24 top-24 -z-10 size-[24rem] rounded-full bg-violet/20 blur-3xl" />
 
