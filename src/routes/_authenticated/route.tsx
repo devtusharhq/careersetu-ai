@@ -1,7 +1,8 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Bell, Compass, LogOut } from "lucide-react";
+import { Bell, LogOut } from "lucide-react";
 
+import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -36,11 +37,8 @@ function AuthenticatedLayout() {
     <div className="min-h-dvh bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-card/80 backdrop-blur">
         <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 py-3 sm:px-6">
-          <Link to="/dashboard" className="flex min-w-0 items-center gap-2">
-            <span className="gradient-brand grid size-9 shrink-0 place-items-center rounded-xl text-primary-foreground">
-              <Compass className="size-5" />
-            </span>
-            <span className="truncate font-display text-lg font-bold">CareerSetu</span>
+          <Link to="/dashboard" aria-label="CareerSetu dashboard">
+            <Logo />
           </Link>
 
           <div className="flex items-center gap-1">
