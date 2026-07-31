@@ -1,46 +1,33 @@
 /**
  * CareerSetu brand mark.
- * "Setu" = bridge — an arched bridge spanning two pillars (school → career),
- * with a guiding star above it. Drawn inline as SVG so it stays crisp at any size.
+ * "Setu" = bridge — a single arched span over a deck, with a guiding star above:
+ * the bridge from where a student is now to the career ahead.
+ * Drawn inline as SVG so it stays crisp at any size.
  */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 48 48" fill="none" aria-hidden="true" className={className}>
-      <defs>
-        <linearGradient id="cs-arch" x1="6" y1="38" x2="42" y2="10" gradientUnits="userSpaceOnUse">
-          <stop stopColor="currentColor" stopOpacity="0.95" />
-          <stop offset="1" stopColor="currentColor" stopOpacity="0.6" />
-        </linearGradient>
-      </defs>
-      {/* bridge deck */}
+      {/* guiding star */}
       <path
-        d="M5 31h38"
-        stroke="currentColor"
-        strokeWidth="3.4"
-        strokeLinecap="round"
-        opacity="0.95"
+        d="M24 3l2.1 4.7L31 9.8l-4.9 2.1L24 16.6l-2.1-4.7L17 9.8l4.9-2.1L24 3z"
+        fill="currentColor"
       />
       {/* arch */}
       <path
-        d="M7 31c0-9.4 7.6-17 17-17s17 7.6 17 17"
-        stroke="url(#cs-arch)"
-        strokeWidth="3.4"
-        strokeLinecap="round"
-      />
-      {/* suspension pillars */}
-      <path
-        d="M14.5 31v-6.2M24 31V19.4M33.5 31v-6.2"
+        d="M6.5 36c0-9.7 7.8-17.5 17.5-17.5S41.5 26.3 41.5 36"
         stroke="currentColor"
-        strokeWidth="2.2"
+        strokeWidth="4.2"
         strokeLinecap="round"
-        opacity="0.55"
       />
-      {/* pier feet */}
-      <path d="M9 35.5h6M33 35.5h6" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" opacity="0.8" />
-      {/* guiding star */}
+      {/* deck */}
+      <path d="M4 36h40" stroke="currentColor" strokeWidth="4.2" strokeLinecap="round" />
+      {/* centre pier */}
       <path
-        d="M24 5.5l1.6 3.6 3.6 1.6-3.6 1.6L24 16l-1.6-3.7-3.6-1.6 3.6-1.6L24 5.5z"
-        fill="currentColor"
+        d="M24 36V23.5"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        opacity="0.6"
       />
     </svg>
   );
@@ -53,15 +40,15 @@ export function Logo({
   className?: string;
   size?: "sm" | "md" | "lg";
 }) {
-  const box = size === "lg" ? "size-11" : size === "sm" ? "size-8" : "size-9";
+  const box = size === "lg" ? "size-12" : size === "sm" ? "size-8" : "size-10";
   const text = size === "lg" ? "text-2xl" : size === "sm" ? "text-base" : "text-lg";
 
   return (
     <span className={`flex min-w-0 items-center gap-2.5 ${className ?? ""}`}>
       <span
-        className={`gradient-brand shadow-glow grid ${box} shrink-0 place-items-center rounded-[0.9rem] text-primary-foreground`}
+        className={`gradient-brand shadow-glow grid ${box} shrink-0 place-items-center rounded-[0.95rem] text-primary-foreground`}
       >
-        <LogoMark className="size-[70%]" />
+        <LogoMark className="size-[78%]" />
       </span>
       <span className={`truncate font-display ${text} font-extrabold tracking-tight`}>
         Career<span className="text-gradient">Setu</span>
