@@ -250,6 +250,14 @@
   }
 }
 
+@utility scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Blueprint grid: signature backdrop texture (a "bridge plan" feel). */
 @utility blueprint-grid {
   background-image:
@@ -288,7 +296,6 @@
     opacity: 0.9;
   }
 }
-
 
 @keyframes float-slow {
   0%,

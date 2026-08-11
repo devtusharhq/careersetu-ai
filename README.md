@@ -1,889 +1,894 @@
-# 🚀 CareerSetu AI
+# CareerSetu AI
 
-### 🤖 AI-Powered Career & Government Exam Guidance Platform for Indian Students
+# Project Name
 
-> **Find Your Perfect Career with AI 🎯**
-> Discover the right career, explore government exams, build personalized study plans, find scholarships & colleges, analyze skill gaps, and prepare for your future — all in one platform.
+CareerSetu – AI Career & Government Exam Guidance Platform
 
-<p align="center">
-  <strong>🎓 Career Guidance • 🤖 Artificial Intelligence • 📚 Government Exams • 🧠 Skill Development • 🚀 Future Planning</strong>
-</p>
+# Vision
 
----
+Build a modern AI-powered web application that helps Indian students make informed career decisions after Class 10, Class 12, Diploma, Graduation, and Post Graduation.
 
-## 🌟 Overview
+The platform should combine career guidance, aptitude assessment, government exam recommendations, study planning, scholarship discovery, college recommendations, resume building, and AI career assistance into one seamless experience.
 
-**CareerSetu AI** is a modern AI-powered career guidance platform designed specifically for **Indian students**.
+The application should look like a premium SaaS product with beautiful UI, smooth animations, responsive layouts, and excellent user experience.
 
-Students often struggle with questions like:
+--------------------------------------------
 
-* 🤔 Which career should I choose?
-* 🎓 Which course or degree is right for me?
-* 🏛️ Which government exams can I apply for?
-* 📚 What should I study and when?
-* 💰 Which scholarships am I eligible for?
-* 🏫 Which colleges should I consider?
-* 🧠 Which skills am I missing for my dream career?
-* 📄 How do I create a professional resume?
+Design Style
 
-CareerSetu brings these solutions together into **one intelligent platform**.
+--------------------------------------------
 
----
+Create a premium, modern educational platform.
 
-## 🎯 Vision
+Theme:
 
-> **To become India's intelligent career companion for every student.**
+• White
 
-CareerSetu aims to help students make **data-driven, personalized and confident career decisions** from Class 10 to Post Graduation.
+• Blue
 
-The platform combines:
+• Purple gradient
 
-🧠 AI Career Guidance
-📊 Aptitude & Personality Assessment
-🏛️ Government Exam Discovery
-📅 Personalized Study Planning
-🎓 College Recommendations
-💰 Scholarship Discovery
-📄 Resume Building
-📈 Skill Gap Analysis
-💬 AI Career Assistant
+• Glassmorphism cards
 
----
+• Rounded corners
 
-# ✨ Key Features
+• Soft shadows
 
-| Feature                    | Description                                 |
-| -------------------------- | ------------------------------------------- |
-| 🧠 AI Career Assessment    | 50-question adaptive assessment             |
-| 🎯 Career Recommendations  | AI-powered personalized career matches      |
-| 🔎 Career Explorer         | Explore 100+ career options                 |
-| 🏛️ Government Exam Finder | Discover relevant government exams          |
-| 📚 AI Study Planner        | Personalized daily & weekly study schedules |
-| 🎓 Learning Resources      | Books, videos, mock tests & resources       |
-| 💰 Scholarship Finder      | Find scholarships based on eligibility      |
-| 🏫 College Recommendations | Discover suitable colleges                  |
-| 📄 Resume Builder          | Create professional resumes & CVs           |
-| 🧩 Skill Gap Analysis      | Identify missing career skills              |
-| 💬 AI Career Chatbot       | Ask career-related questions                |
-| 📊 Progress Dashboard      | Track learning and career progress          |
-| 🔔 Notifications           | Exams, scholarships & deadline alerts       |
-| 👨‍💼 Admin Panel          | Manage platform content & analytics         |
+• Smooth transitions
 
----
+• Beautiful illustrations
 
-# 🎨 Design Philosophy
+• Responsive design
 
-CareerSetu is designed as a **premium modern SaaS platform**.
+• Dark mode
 
-### 🎨 Visual Style
+Use modern typography.
 
-* ⚪ Clean white interface
-* 🔵 Blue primary theme
-* 🟣 Purple gradients
-* 🪟 Glassmorphism cards
-* 🔵 Rounded UI components
-* 🌫️ Soft shadows
-* ✨ Smooth animations
-* 📱 Fully responsive layouts
-* 🌙 Dark mode
-* 📊 Beautiful charts
-* 🖼️ Modern illustrations
+Make the UI feel similar to Notion, Linear, Duolingo and Stripe.
 
-### 💡 Design Inspiration
+--------------------------------------------
 
-Inspired by the usability and visual quality of:
+Landing Page
 
-**Notion • Linear • Duolingo • Stripe**
+--------------------------------------------
 
----
+Create a stunning landing page containing
 
-# 🏠 Landing Page
+Hero Section
 
-The landing page introduces CareerSetu with an engaging hero experience.
+Headline
 
-### 🚀 Hero Section
+"Find Your Perfect Career with AI"
 
-**Find Your Perfect Career with AI**
+Subheading
 
-> Take an AI Career Assessment, discover careers, explore government exams, receive personalized study plans, and build your future confidently.
+Take an AI Career Assessment, discover careers, explore government exams, receive personalized study plans, and build your future confidently.
 
-### 🔘 Primary Actions
+Primary Button
 
-* 🎯 **Start Career Assessment**
-* 🔎 **Explore Careers**
+Start Career Assessment
 
-### 📌 Landing Page Sections
+Secondary Button
 
-* 🚀 Hero Section
-* ⭐ Features
-* 📊 Platform Statistics
-* 💼 Career Categories
-* 💬 Testimonials
-* ❓ FAQ
-* 🔗 Footer
+Explore Careers
 
----
+Include
 
-# 🔐 Authentication
+• Animated Hero Illustration
 
-CareerSetu provides secure user authentication.
+• Features Section
 
-### 📝 Registration
+• Statistics Section
 
-Users can create an account using:
+• Career Categories
 
-* 👤 Name
-* 📧 Email
-* 🔑 Password
-* 📱 Phone Number
-* 🎂 Age
-* ⚧️ Gender
-* 🗺️ State
-* 🏙️ City
-* 🎓 Current Education
-* 🌐 Preferred Language
+• Testimonials
 
-### 🎓 Education Options
+• FAQ
 
-* Class 10
-* Class 12
-* Diploma
-* Graduate
-* Post Graduate
+• Footer
 
-### 🌐 Supported Languages
+--------------------------------------------
 
-* 🇬🇧 English
-* 🇮🇳 Hindi
-* 🇮🇳 Marathi
+Authentication
 
----
+--------------------------------------------
 
-# 📊 Personalized Dashboard
+Create Login and Signup.
 
-After logging in, students receive a personalized dashboard.
+Registration fields
 
-### 🖥️ Dashboard Components
+Name
 
-* 👋 Welcome Card
-* 🎯 Today's Goal
-* 🧠 Career Match Score
-* 📈 Assessment Progress
-* 💼 Saved Careers
-* 🏛️ Saved Government Exams
-* ⏰ Upcoming Deadlines
-* 💰 Scholarships
-* 📚 Study Planner
-* 📈 Learning Progress
-* 🔔 Notifications
+Email
 
-### 📊 Analytics
+Password
 
-Beautiful visualizations display:
+Phone Number
 
-* 📌 Career Interests
-* 📚 Study Progress
-* 🧠 Assessment Scores
-* 🎯 Career Compatibility
+Age
 
----
+Gender
 
-# 🧠 Module 1 — AI Career Assessment
+State
 
-A personalized **50-question adaptive assessment** analyzes the student's interests, personality and strengths.
+City
 
-### 📚 Assessment Categories
+Current Education
 
-* 💻 Technology
-* 🏥 Healthcare
-* 💼 Management
-* 💰 Business
-* 📊 Commerce
-* 🎨 Arts
-* ⚖️ Law
-* 🌾 Agriculture
-* 🔬 Science
-* 🗣️ Communication
-* 🎨 Creativity
-* 👑 Leadership
-* 🧩 Logical Reasoning
-* 🧠 Personality
+• Class 10
 
-### 💭 Example Questions
+• Class 12
 
-> "I enjoy solving difficult problems."
+• Diploma
 
-> "I enjoy helping people."
+• Graduate
 
-> "I enjoy coding."
+• Post Graduate
 
-> "I like public speaking."
+Preferred Language
 
-> "I enjoy managing teams."
+• English
 
-### 📊 Assessment Results
+• Hindi
 
-After completing the assessment:
+• Marathi
 
-* 🕸️ Radar Chart
-* 📊 Interest Scores
-* 🎯 Career Compatibility
-* 🧠 Personality Summary
-* 📚 Learning Style
-* 💪 Strengths
-* ⚠️ Weaknesses
-* ⭐ Top Recommended Careers
+--------------------------------------------
 
----
+Dashboard
 
-# 🎯 Module 2 — Career Recommendations
+--------------------------------------------
 
-CareerSetu uses AI to recommend careers based on the student's profile.
-
-Each career recommendation includes:
-
-* 🎯 Compatibility Percentage
-* 💡 Reason for Recommendation
-* 🛠️ Required Skills
-* 🎓 Education Path
-* 💰 Average Salary
-* 📈 Future Demand
-* 🚀 Growth Opportunities
-* 🏢 Top Recruiters
-* 🗺️ Career Roadmap
-* 🔖 Bookmark Career
+After login the user enters a personalized dashboard.
 
----
+Dashboard should display
 
-# 🔎 Module 3 — Career Explorer
+Welcome Card
 
-Explore **100+ careers** through an advanced searchable career database.
+Today's Goal
 
-### 🔍 Filters
+Career Match Score
 
-* 🏢 Industry
-* 💰 Salary
-* 🎓 Education
-* 🏛️ Government
-* 🏢 Private
-* 🏠 Remote
-* ⭐ Popular Careers
+Assessment Progress
 
-### 💼 Example Careers
+Saved Careers
 
-* 🤖 AI Engineer
-* 💻 Software Engineer
-* 🔐 Cyber Security Expert
-* ☁️ Cloud Engineer
-* 🛡️ Ethical Hacker
-* 🤖 Robotics Engineer
-* 🩺 Doctor
-* ⚖️ Lawyer
-* 🧠 Psychologist
-* 📊 Economist
-* 🧮 Data Scientist
-* 📈 Statistician
-* ⚖️ Patent Analyst
-* 🧪 Food Technologist
-* 🌊 Oceanographer
-* ✈️ Pilot
-* 🛫 Air Traffic Controller
-* 🔬 Forensic Scientist
-* 🐅 Wildlife Biologist
-* 👨‍🏫 Teacher
-* 🎓 Professor
-* 📑 Chartered Accountant
-* 🏗️ Architect
-* 🇮🇳 IAS Officer
-* 👮 IPS Officer
-* 🌍 IFS Officer
+Saved Government Exams
 
----
+Upcoming Deadlines
 
-# 🏛️ Module 4 — Government Exam Finder
+Scholarships
 
-When a student selects a career, CareerSetu automatically recommends relevant government examinations.
+Study Planner
 
-### 📋 Exam Information
+Learning Progress
 
-Each exam page provides:
+Notifications
 
-* 📖 Overview
-* ✅ Eligibility
-* 🎂 Age Limit
-* 🎓 Qualification
-* 📝 Exam Pattern
-* 🔄 Selection Process
-* 📚 Syllabus
-* 📊 Previous Year Cutoff
-* 💰 Salary
-* 🌐 Official Website
-* 📅 Application Timeline
-* 💡 Preparation Tips
+Charts showing
 
-### 🏛️ Supported Exams
+Career Interests
 
-* 🇮🇳 UPSC
-* 📊 SSC CGL
-* 📝 SSC CHSL
-* 🏛️ MPSC
-* 🎓 GATE
-* 🛰️ DRDO
-* 🚀 ISRO
-* 💻 NIC Scientist
-* 🏦 RBI Grade B
-* 📈 SEBI
-* 🌾 NABARD
-* 🚆 RRB
-* 🕵️ IB ACIO
-* 🎖️ CDS
-* ✈️ AFCAT
-* 🛡️ CAPF
-* 🌲 Indian Forest Service
-* 🏥 ESIC
-* ⚙️ BHEL
-* 🛢️ ONGC
-* 🏢 PSU Recruitments
+Study Progress
 
----
+Assessment Scores
 
-# 📅 Module 5 — AI Study Planner
+--------------------------------------------
 
-Students select an examination and receive an AI-generated preparation plan.
+Module 1
 
-### 📝 Inputs
+AI Career Assessment
 
-* 🎯 Target Exam
-* ⏰ Daily Study Hours
-* 📅 Exam Date
-* 📚 Preparation Level
-* ⚠️ Weak Subjects
+--------------------------------------------
 
-### 🤖 AI Generates
+Build a beautiful assessment wizard.
 
-* 📅 Daily Schedule
-* 🎯 Weekly Goals
-* 🗓️ Monthly Plan
-* 🔄 Revision Schedule
-* 📝 Mock Test Calendar
+50 adaptive questions.
 
-Students can:
+Categories
 
-✅ Mark tasks as completed
-🔄 Automatically reschedule missed tasks
-📊 Track preparation progress
+Technology
 
----
+Healthcare
 
-# 📚 Module 6 — Learning Resources
+Management
 
-Organized resources for each examination.
+Business
 
-### 📖 Resources
+Commerce
 
-* 📚 Books
-* ▶️ YouTube Videos
-* 🌐 Official Websites
-* 📝 Practice Papers
-* 🧪 Mock Tests
-* 📰 Current Affairs
-* 📄 Free PDFs
-* 🔖 Bookmarks
+Arts
 
----
+Law
 
-# 💰 Module 7 — Scholarship Finder
+Agriculture
 
-CareerSetu helps students discover scholarships based on their profile.
+Science
 
-### 🔍 Recommendation Criteria
+Communication
 
-* 🗺️ State
-* 💰 Income
-* ⚧️ Gender
-* 🎓 Education
-* 👥 Category
-* 📊 Marks
+Creativity
 
-### 💵 Scholarship Information
+Leadership
 
-Each scholarship displays:
+Logical Reasoning
 
-* 💰 Scholarship Amount
-* ✅ Eligibility
-* 📅 Deadline
-* 🌐 Official Website
+Personality
 
----
+Examples
 
-# 🏫 Module 8 — College Recommendation
+I enjoy solving difficult problems.
 
-AI-powered college recommendations based on student preferences.
+I enjoy helping people.
 
-### 🏛️ College Information
+I enjoy coding.
 
-* 🏢 Government / Private
-* 💰 Fees
-* 💼 Placements
-* 💵 Average Package
-* 📍 Location
-* 📝 Admission Process
-* 🎯 Entrance Exams
-* 🏫 Facilities
+I like public speaking.
 
----
+I enjoy managing teams.
 
-# 📄 Module 9 — Resume Builder
+After completion display
 
-Students can create professional career documents using AI.
+Radar Chart
 
-### 📑 Generate
+Interest Scores
 
-* 📄 Resume
-* 📋 CV
-* ✉️ Cover Letter
+Career Compatibility
 
-### 🎨 Features
+Personality Summary
 
-* 💼 Professional Templates
-* 🤖 AI-assisted content
-* ✨ Clean formatting
-* 📥 PDF export
+Learning Style
 
----
+Strengths
 
-# 🧩 Module 10 — Skill Gap Analysis
+Weaknesses
 
-CareerSetu identifies the skills required for a target career and compares them with the student's current skills.
+Top Recommended Careers
 
-### 💡 Example
+--------------------------------------------
 
-**Target Career:** Data Analyst
+Module 2
 
-**Current Skills:**
+Career Recommendations
 
-* Excel
-* Communication
+--------------------------------------------
 
-**Missing Skills:**
+Recommend careers using AI.
 
-* SQL
-* Python
-* Power BI
+Each recommendation includes
 
-### 🚀 Recommendations
+Compatibility Percentage
 
-The platform recommends:
+Reason for Recommendation
 
-* 🎓 Courses
-* 🛠️ Projects
-* 📜 Certifications
-* 🗺️ Learning Path
+Required Skills
 
----
+Education Path
 
-# 💬 Module 11 — AI Career Chatbot
+Average Salary
 
-An intelligent AI assistant answers career-related questions using platform information.
+Future Demand
 
-### 💭 Example Questions
+Growth Opportunities
 
-> "Which stream is right for me?"
+Top Recruiters
 
-> "Can I become an ISRO Scientist?"
+Roadmap
 
-> "Government jobs after BSc IT?"
+Allow bookmarking careers.
 
-> "Scholarships available in Maharashtra?"
+--------------------------------------------
 
-> "Difference between GATE and UPSC?"
+Module 3
 
-The chatbot acts as a **24/7 AI career assistant** for students.
+Career Explorer
 
----
+--------------------------------------------
 
-# 📈 Module 12 — Progress Dashboard
+Create searchable career explorer.
 
-Students can monitor their complete career-development journey.
+Include filters
 
-### 📊 Track
+Industry
 
-* 🧠 Assessment History
-* 🎯 Career Match
-* 📚 Study Progress
-* 📝 Mock Test Scores
-* 🎓 Completed Courses
-* 🔖 Bookmarks
-* 🏛️ Upcoming Exams
-* 🏆 Achievements
-* 📜 Certificates
+Salary
 
----
+Education
 
-# 🔔 Notification Center
+Government
 
-Keep students updated about important events.
+Private
 
-### 🔔 Notifications
+Remote
 
-* 📝 Exam Registration
-* 💰 Scholarships
-* 🏫 Admission Dates
-* 📊 Exam Results
-* ⏰ Application Deadlines
-* 📚 Study Reminders
+Popular Careers
 
----
+Each career page contains
 
-# 👨‍💼 Admin Panel
+Overview
 
-A centralized dashboard allows administrators to manage the platform.
+Responsibilities
 
-### ⚙️ Admin Management
+Required Skills
 
-* 👥 Users
-* ❓ Assessment Questions
-* 💼 Careers
-* 🏛️ Government Exams
-* 💰 Scholarships
-* 🏫 Colleges
-* 📚 Learning Resources
-* 🔔 Notifications
-* 📊 Dashboard Analytics
+Degrees
 
----
+Top Colleges
 
-# 🗄️ Database Architecture
+Salary
 
-CareerSetu is designed around a scalable relational data model.
+Demand
 
-### 📦 Core Models
+Companies Hiring
 
-```text
+Future Scope
+
+Roadmap
+
+Include at least 100 careers.
+
+Examples
+
+AI Engineer
+
+Software Engineer
+
+Cyber Security Expert
+
+Cloud Engineer
+
+Ethical Hacker
+
+Robotics Engineer
+
+Doctor
+
+Lawyer
+
+Psychologist
+
+Economist
+
+Data Scientist
+
+Statistician
+
+Patent Analyst
+
+Food Technologist
+
+Oceanographer
+
+Pilot
+
+Air Traffic Controller
+
+Forensic Scientist
+
+Wildlife Biologist
+
+Teacher
+
+Professor
+
+Chartered Accountant
+
+Architect
+
+IAS Officer
+
+IPS Officer
+
+IFS Officer
+
+--------------------------------------------
+
+Module 4
+
+Government Exam Finder
+
+--------------------------------------------
+
+Once a career is selected, automatically recommend relevant government exams.
+
+Each exam page contains
+
+Overview
+
+Eligibility
+
+Age Limit
+
+Qualification
+
+Exam Pattern
+
+Selection Process
+
+Syllabus
+
+Previous Year Cutoff
+
+Salary
+
+Official Website
+
+Application Timeline
+
+Preparation Tips
+
+Examples
+
+UPSC
+
+SSC CGL
+
+SSC CHSL
+
+MPSC
+
+GATE
+
+DRDO
+
+ISRO
+
+NIC Scientist
+
+RBI Grade B
+
+SEBI
+
+NABARD
+
+RRB
+
+IB ACIO
+
+CDS
+
+AFCAT
+
+CAPF
+
+Indian Forest Service
+
+ESIC
+
+BHEL
+
+ONGC
+
+PSU Recruitments
+
+--------------------------------------------
+
+Module 5
+
+AI Study Planner
+
+--------------------------------------------
+
+Student selects exam.
+
+Inputs
+
+Target Exam
+
+Daily Study Hours
+
+Exam Date
+
+Preparation Level
+
+Weak Subjects
+
+Generate
+
+Daily Schedule
+
+Weekly Goals
+
+Monthly Plan
+
+Revision Schedule
+
+Mock Test Calendar
+
+Allow users to mark tasks completed.
+
+Automatically reschedule missed tasks.
+
+--------------------------------------------
+
+Module 6
+
+Learning Resources
+
+--------------------------------------------
+
+Organize resources by exam.
+
+Books
+
+YouTube Videos
+
+Official Websites
+
+Practice Papers
+
+Mock Tests
+
+Current Affairs
+
+Free PDFs
+
+Bookmarks
+
+--------------------------------------------
+
+Module 7
+
+Scholarship Finder
+
+--------------------------------------------
+
+Recommend scholarships based on
+
+State
+
+Income
+
+Gender
+
+Education
+
+Category
+
+Marks
+
+Display
+
+Scholarship Amount
+
+Eligibility
+
+Deadline
+
+Official Website
+
+--------------------------------------------
+
+Module 8
+
+College Recommendation
+
+--------------------------------------------
+
+Recommend colleges.
+
+Display
+
+Government Colleges
+
+Private Colleges
+
+Fees
+
+Placements
+
+Average Package
+
+Location
+
+Admission Process
+
+Entrance Exams
+
+Facilities
+
+--------------------------------------------
+
+Module 9
+
+Resume Builder
+
+--------------------------------------------
+
+Allow users to generate
+
+Resume
+
+CV
+
+Cover Letter
+
+Professional Templates
+
+Download as PDF.
+
+--------------------------------------------
+
+Module 10
+
+Skill Gap Analysis
+
+--------------------------------------------
+
+Example
+
+Target Career
+
+Data Analyst
+
+Current Skills
+
+Excel
+
+Communication
+
+Missing Skills
+
+SQL
+
+Python
+
+Power BI
+
+Recommend
+
+Courses
+
+Projects
+
+Certifications
+
+Learning Path
+
+--------------------------------------------
+
+Module 11
+
+AI Career Chatbot
+
+--------------------------------------------
+
+Build an intelligent chatbot.
+
+Example questions
+
+Which stream is right for me?
+
+Can I become an ISRO Scientist?
+
+Government jobs after BSc IT?
+
+Scholarships available in Maharashtra?
+
+Difference between GATE and UPSC?
+
+The chatbot should answer using platform information.
+
+--------------------------------------------
+
+Module 12
+
+Progress Dashboard
+
+--------------------------------------------
+
+Display
+
+Assessment History
+
+Career Match
+
+Study Progress
+
+Mock Test Scores
+
+Completed Courses
+
+Bookmarks
+
+Upcoming Exams
+
+Achievements
+
+Certificates
+
+--------------------------------------------
+
+Notifications
+
+--------------------------------------------
+
+Provide notification center.
+
+Notify users about
+
+Exam Registration
+
+Scholarships
+
+Admission Dates
+
+Exam Results
+
+Application Deadlines
+
+Study Reminders
+
+--------------------------------------------
+
+Admin Panel
+
+--------------------------------------------
+
+Create an admin dashboard.
+
+Admin can manage
+
 Users
-│
-├── Assessment Questions
-├── Assessment Results
-├── Career Profiles
-├── Government Exams
-├── Scholarships
-├── Colleges
-├── Study Plans
-├── Resources
-├── Notifications
-├── Skills
-├── Resume Data
-├── Progress
-└── Bookmarks
-```
 
-### 🗃️ Main Entities
+Questions
 
-| Entity                  | Purpose                             |
-| ----------------------- | ----------------------------------- |
-| 👤 Users                | Student profiles and authentication |
-| 🧠 Assessment Questions | Career assessment questions         |
-| 📊 Assessment Results   | Assessment scores and analysis      |
-| 💼 Career Profiles      | Career information                  |
-| 🏛️ Government Exams    | Examination database                |
-| 💰 Scholarships         | Scholarship information             |
-| 🏫 Colleges             | College database                    |
-| 📅 Study Plans          | Personalized schedules              |
-| 📚 Resources            | Learning materials                  |
-| 🔔 Notifications        | User alerts                         |
-| 🛠️ Skills              | Career skill database               |
-| 📄 Resume Data          | Resume information                  |
-| 📈 Progress             | Student progress                    |
-| 🔖 Bookmarks            | Saved content                       |
+Careers
 
----
+Government Exams
 
-# 🤖 AI Features
+Scholarships
 
-CareerSetu integrates AI throughout the student's journey.
+Colleges
 
-### 🧠 AI Capabilities
+Learning Resources
 
-```text
-🤖 AI Career Recommendation
-       ↓
-🧠 AI Personality Analysis
-       ↓
-🎓 AI Stream Recommendation
-       ↓
-🏛️ AI Government Exam Recommendation
-       ↓
-📅 AI Study Planner
-       ↓
-📄 AI Resume Builder
-       ↓
-🧩 AI Skill Gap Analysis
-       ↓
-💬 AI Career Chatbot
-       ↓
-🗺️ AI Career Roadmap Generator
-```
+Notifications
 
----
+Dashboard Analytics
 
-# 🔮 Future Roadmap
+--------------------------------------------
 
-CareerSetu can be expanded into a complete career ecosystem.
+Database Models
 
-### 🚀 Planned Features
+--------------------------------------------
 
-* 🎙️ Voice Assistant
-* 👨‍💼 Career Counsellor Booking
-* 🎤 Interview Preparation
-* 💼 Internship Recommendations
-* 💻 Job Recommendations
-* 🧑‍🏫 Mentor Marketplace
-* 👥 Community Forum
-* 💬 Discussion Groups
-* 👨‍👩‍👦 Parent Dashboard
-* 👨‍🏫 Teacher Dashboard
+Users
 
----
+Assessment Questions
 
-# 🏗️ Project Architecture
+Assessment Results
 
-CareerSetu follows a modular and scalable architecture.
+Career Profiles
 
-```text
-                    🌐 CAREERSETU AI
-                           │
-              ┌────────────┴────────────┐
-              │                         │
-         👨‍🎓 STUDENT               👨‍💼 ADMIN
-              │                         │
-              └────────────┬────────────┘
-                           │
-                    🖥️ WEB APPLICATION
-                           │
-              ┌────────────┼────────────┐
-              │            │            │
-           🤖 AI       📊 Analytics   🔔 Alerts
-              │            │            │
-              └────────────┼────────────┘
-                           │
-                     🗄️ DATABASE
-                           │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-     Careers            Exams           Scholarships
-        │                  │                  │
-     Colleges           Skills           Resources
-```
+Government Exams
 
----
+Scholarships
 
-# ⚡ User Journey
+Colleges
 
-```text
-👤 Register
-     ↓
-📝 Complete Profile
-     ↓
-🧠 Take AI Assessment
-     ↓
-📊 Get Career Match
-     ↓
-🎯 Explore Recommended Careers
-     ↓
-🏛️ Discover Government Exams
-     ↓
-📅 Generate Study Plan
-     ↓
-📚 Learn & Practice
-     ↓
-🧩 Analyze Skill Gaps
-     ↓
-📄 Build Resume
-     ↓
-📈 Track Progress
-     ↓
-🚀 Build Your Future
-```
+Study Plans
 
----
+Resources
 
-# 🛠️ Technology & Development
+Notifications
 
-The project is being developed using **Lovable**, enabling rapid AI-assisted application development while keeping the project synchronized with GitHub.
+Skills
 
-🔗 **Lovable:** [Open Lovable](https://lovable.dev/?utm_source=chatgpt.com)
+Resume Data
 
-### 💻 Local Development
+Progress
 
-Prerequisites:
+Bookmarks
 
-* 🟢 Node.js
-* 📦 npm
-* 🌐 Modern Web Browser
-* 🧑‍💻 Git
+--------------------------------------------
 
-### 📥 Installation
+AI Features
 
-```bash
-# Clone the repository
+--------------------------------------------
+
+AI Career Recommendation
+
+AI Personality Analysis
+
+AI Stream Recommendation
+
+AI Government Exam Recommendation
+
+AI Study Planner
+
+AI Resume Builder
+
+AI Skill Gap Analysis
+
+AI Career Chatbot
+
+AI Career Roadmap Generator
+
+--------------------------------------------
+
+Future Features
+
+--------------------------------------------
+
+Voice Assistant
+
+Career Counsellor Booking
+
+Interview Preparation
+
+Internship Recommendation
+
+Job Recommendation
+
+Mentor Marketplace
+
+Community Forum
+
+Discussion Groups
+
+Parent Dashboard
+
+Teacher Dashboard
+
+--------------------------------------------
+
+Additional Requirements
+
+--------------------------------------------
+
+• Fully responsive
+
+• Clean component architecture
+
+• Accessible UI
+
+• Fast loading
+
+• Beautiful charts
+
+• Search everywhere
+
+• Advanced filters
+
+• Bookmark system
+
+• Dark mode
+
+• Multi-language support
+
+• Smooth animations
+
+• Modern dashboard
+
+• Empty states
+
+• Loading skeletons
+
+• Error handling
+
+• Reusable components
+
+The final result should feel like a production-ready AI SaaS platform capable of scaling to millions of Indian students.
+
+This project was built with [Lovable](https://lovable.dev).
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/29e09a52-f5b8-4c95-bcb7-ee24fdfb64bd).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+
+```sh
 git clone <this-repository-url>
-
-# Navigate into the project
 cd <repository-name>
-
-# Install dependencies
 npm i
-
-# Start development server
 npm run dev
 ```
-
----
-
-# 🎨 UI/UX Requirements
-
-CareerSetu focuses heavily on user experience.
-
-### ✨ Experience Features
-
-* 📱 Fully Responsive
-* ♿ Accessible UI
-* ⚡ Fast Loading
-* 🔍 Global Search
-* 🎛️ Advanced Filters
-* 🔖 Bookmark System
-* 🌙 Dark Mode
-* 🌐 Multi-language Support
-* ✨ Smooth Animations
-* 📊 Interactive Charts
-* 🧩 Reusable Components
-* 💀 Loading Skeletons
-* 🚫 Empty States
-* ⚠️ Error Handling
-
----
-
-# 📈 Scalability Vision
-
-CareerSetu is designed with the long-term goal of becoming a platform capable of serving **millions of Indian students**.
-
-### 🚀 Long-Term Vision
-
-```text
-                 🇮🇳 INDIAN STUDENTS
-                         │
-              ┌──────────┴──────────┐
-              │                     │
-          🎓 EDUCATION          💼 CAREER
-              │                     │
-              └──────────┬──────────┘
-                         │
-                    🤖 CAREERSETU
-                         │
-          ┌──────────────┼──────────────┐
-          │              │              │
-       AI GUIDE      EXAM GUIDE     SKILL GUIDE
-          │              │              │
-          └──────────────┼──────────────┘
-                         │
-                  🚀 FUTURE READY
-```
-
----
-
-# 🏆 Why CareerSetu?
-
-### ❌ Traditional Approach
-
-Student → Search Google → Watch Videos → Ask Friends → Find Different Websites → Get Confused
-
-### ✅ CareerSetu Approach
-
-Student → 🧠 AI Assessment → 🎯 Career Match → 🏛️ Exams → 📅 Study Plan → 📚 Resources → 🧩 Skills → 📄 Resume → 🚀 Career
-
-> **One student. One platform. One intelligent career journey.**
-
----
-
-# 💡 Project Highlights
-
-🌟 **12+ Major Modules**
-🤖 **8+ AI-Powered Features**
-💼 **100+ Career Profiles**
-🏛️ **Multiple Government Exams**
-🎓 **Personalized Recommendations**
-📚 **AI Study Planning**
-💰 **Scholarship Discovery**
-🏫 **College Recommendations**
-📄 **AI Resume Generation**
-📈 **Progress Analytics**
-🌐 **Multi-language Support**
-🌙 **Dark Mode**
-
----
-
-# 👨‍💻 Development Philosophy
-
-CareerSetu follows these principles:
-
-> 🎯 **Student First** — Every feature should solve a real student problem.
-
-> 🤖 **AI Assisted** — Use AI to personalize decisions, not replace human judgment.
-
-> 📊 **Data Driven** — Recommendations should be based on meaningful student data.
-
-> 🎨 **Beautiful UX** — Complex information should feel simple and approachable.
-
-> 🔐 **Privacy First** — Student data should be handled responsibly and securely.
-
-> 🚀 **Scalable Architecture** — Build for today's students while preparing for tomorrow's scale.
-
----
-
-# 🔗 Project Links
-
-### 🚀 Build with Lovable
-
-[Open CareerSetu in Lovable](https://lovable.dev/projects/29e09a52-f5b8-4c95-bcb7-ee24fdfb64bd?utm_source=chatgpt.com)
-
-### 🌐 Lovable
-
-[Lovable](https://lovable.dev/?utm_source=chatgpt.com)
-
-### 💻 Repository
-
-```text
-<GitHub Repository URL>
-```
-
----
-
-# 📜 License
-
-This project is developed for **educational and project purposes**.
-
-License information can be added here when the project is released publicly.
-
----
-
-# ❤️ Built for India's Future
-
-<p align="center">
-
-### 🇮🇳 Empowering Students.
-
-### 🧠 Powered by AI.
-
-### 🎯 Built for Better Careers.
-
-**CareerSetu AI — Your Career. Your Future. Your Path. 🚀**
-
-</p>
-
----
-
-<p align="center">
-
-⭐ **If you like CareerSetu AI, consider giving the repository a star!** ⭐
-
-</p>
