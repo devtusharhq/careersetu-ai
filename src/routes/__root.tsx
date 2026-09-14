@@ -121,6 +121,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script src="https://js.puter.com/v2/" async></script>
       </head>
       <body>
         {children}

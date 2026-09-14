@@ -25,25 +25,36 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
-    try {
-      const { data } = await supabase.auth.getUser();
-      if (data?.user) return { user: data.user };
-    } catch {
-      // Fallback
-    }
-
+    // Fast local check first to eliminate redirect latency
     const demo = typeof localStorage !== "undefined" ? localStorage.getItem("careersetu_demo_user") : null;
     if (demo) {
-      return { user: JSON.parse(demo) };
+      try {
+        const parsed = JSON.parse(demo);
+        if (parsed) return { user: parsed };
+      } catch {}
+    }
+
+    try {
+      // Race session check with a 60ms timeout to prevent UI freezes
+      const sessionPromise = supabase.auth.getSession();
+      const timeoutPromise = new Promise<{ data: { session: null } }>((resolve) =>
+        setTimeout(() => resolve({ data: { session: null } }), 60)
+      );
+      const { data } = await Promise.race([sessionPromise, timeoutPromise]);
+      if (data?.session?.user) {
+        return { user: data.session.user };
+      }
+    } catch {
+      // Fallback to demo profile
     }
 
     // Auto-initialize demo user if visiting directly
     const defaultUser = {
       id: "demo-user-id",
-      full_name: "Aditi Kulkarni",
-      email: "student@careersetu.ai",
-      city: "Pune",
-      current_education: "btech_cs",
+      full_name: "Tushar Devendra",
+      email: "tushar@careersetu.ai",
+      city: "Mumbai",
+      current_education: "class_12",
     };
     if (typeof localStorage !== "undefined") {
       localStorage.setItem("careersetu_demo_user", JSON.stringify(defaultUser));

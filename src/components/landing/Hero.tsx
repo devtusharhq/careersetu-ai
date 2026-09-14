@@ -44,10 +44,13 @@ export function Hero() {
             <Button
               size="lg"
               variant="outline"
-              className="h-12 rounded-xl border-border bg-card/70 px-6 text-base backdrop-blur"
+              className="h-12 rounded-xl border-border bg-card/70 px-6 text-base backdrop-blur cursor-pointer hover:bg-accent"
+              asChild
             >
-              <Compass className="mr-1 size-5" />
-              Explore Careers
+              <a href="#features">
+                <Compass className="mr-1.5 size-5 text-primary" />
+                Explore Careers
+              </a>
             </Button>
           </div>
 
