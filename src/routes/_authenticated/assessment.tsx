@@ -16,14 +16,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import {
-  ASSESSMENT_QUESTIONS,
-  calculateAssessmentResults,
-} from "@/lib/data/assessment-questions";
+import { getManagedQuestions, ManagedQuestionItem } from "@/lib/store/admin-content-store";
+import { calculateAssessmentResults } from "@/lib/data/assessment-questions";
+import { getCurrentUser } from "@/lib/auth/rbac";
 import {
   getStoredAssessmentAnswers,
   saveAssessmentAnswers,
   saveAssessmentResults,
+  recordAssessmentCompletion,
 } from "@/lib/store/careersetu-store";
 
 export const Route = createFileRoute("/_authenticated/assessment")({
@@ -49,25 +49,44 @@ const SCALE_OPTIONS = [
 
 function AssessmentPage() {
   const navigate = useNavigate();
+  const currentUser = getCurrentUser();
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [questionsList, setQuestionsList] = useState<ManagedQuestionItem[]>(() => {
+    const live = getManagedQuestions().filter((q) => q.active !== false);
+    return live.length > 0 ? live : [];
+  });
 
   useEffect(() => {
+    const live = getManagedQuestions().filter((q) => q.active !== false);
+    setQuestionsList(live);
+
     const saved = getStoredAssessmentAnswers();
     if (Object.keys(saved).length > 0) {
       setAnswers(saved);
       // Auto-seek to first unanswered question
-      const firstUnanswered = ASSESSMENT_QUESTIONS.findIndex((q) => !saved[q.id]);
+      const firstUnanswered = live.findIndex((q) => !saved[q.id]);
       if (firstUnanswered !== -1) {
         setCurrentIndex(firstUnanswered);
       }
     }
   }, []);
 
-  const totalQuestions = ASSESSMENT_QUESTIONS.length;
-  const currentQuestion = ASSESSMENT_QUESTIONS[currentIndex] ?? ASSESSMENT_QUESTIONS[0]!;
+  const totalQuestions = questionsList.length || 50;
+  const currentQuestion = questionsList[currentIndex] ?? questionsList[0] ?? {
+    id: 1,
+    text: "I enjoy solving problems and exploring structured solutions.",
+    category: "Technology",
+    weight: 1,
+    traits: ["Analytical Thinking"],
+    order: 1,
+  };
   const answeredCount = Object.keys(answers).length;
   const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
+
+  const traitDisplay = Array.isArray((currentQuestion as any).traits)
+    ? (currentQuestion as any).traits.join(", ")
+    : (currentQuestion as any).traits || (currentQuestion as any).trait || currentQuestion.category;
 
   const handleSelectAnswer = (value: number) => {
     const newAnswers = { ...answers, [currentQuestion.id]: value };
@@ -83,6 +102,11 @@ function AssessmentPage() {
   const handleComplete = () => {
     const results = calculateAssessmentResults(answers);
     saveAssessmentResults(results);
+    recordAssessmentCompletion(
+      currentUser.email,
+      currentUser.full_name || "Student",
+      results
+    );
     toast.success("Assessment completed successfully! Generating your career blueprint...");
     navigate({ to: "/assessment-results" as any });
   };
@@ -151,7 +175,7 @@ function AssessmentPage() {
             Category: {currentQuestion.category}
           </Badge>
           <span className="text-[11px] font-medium text-muted-foreground">
-            Trait: {currentQuestion.trait}
+            Trait: {traitDisplay}
           </span>
         </div>
 
@@ -223,7 +247,7 @@ function AssessmentPage() {
       <div className="p-4 rounded-2xl border border-border/60 bg-accent/20 space-y-2">
         <p className="text-[11px] font-semibold text-muted-foreground">Jump to question:</p>
         <div className="flex flex-wrap gap-1.5">
-          {ASSESSMENT_QUESTIONS.map((q, idx) => {
+          {questionsList.map((q, idx) => {
             const isAnswered = answers[q.id] !== undefined;
             const isCurrent = currentIndex === idx;
             return (

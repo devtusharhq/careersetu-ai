@@ -174,6 +174,93 @@ export function saveAssessmentAnswers(answers: Record<number, number>) {
   localStorage.setItem("careersetu_assessment_answers", JSON.stringify(answers));
 }
 
+export interface CompletedAssessmentRecord {
+  id: string;
+  studentEmail: string;
+  studentName: string;
+  completedAt: string;
+  primaryDomain: string;
+  topCareer: string;
+  score: number;
+}
+
+const DEFAULT_COMPLETED_ASSESSMENTS: CompletedAssessmentRecord[] = [
+  {
+    id: "assess-1",
+    studentEmail: "aditi.kulkarni@gmail.com",
+    studentName: "Aditi Kulkarni",
+    completedAt: "2026-03-02T14:30:00.000Z",
+    primaryDomain: "Technology",
+    topCareer: "AI & Machine Learning Engineer",
+    score: 94,
+  },
+  {
+    id: "assess-2",
+    studentEmail: "rahul.sharma@gmail.com",
+    studentName: "Rahul Sharma",
+    completedAt: "2026-03-06T16:00:00.000Z",
+    primaryDomain: "Civil Services",
+    topCareer: "IAS Officer (Civil Services)",
+    score: 88,
+  },
+  {
+    id: "assess-3",
+    studentEmail: "priya.patil@outlook.com",
+    studentName: "Priya Patil",
+    completedAt: "2026-03-09T10:15:00.000Z",
+    primaryDomain: "Technology",
+    topCareer: "Full Stack Web Developer",
+    score: 91,
+  },
+];
+
+export function getCompletedAssessments(): CompletedAssessmentRecord[] {
+  if (typeof localStorage === "undefined") return DEFAULT_COMPLETED_ASSESSMENTS;
+  try {
+    const raw = localStorage.getItem("careersetu_completed_assessments");
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return DEFAULT_COMPLETED_ASSESSMENTS;
+}
+
+export function saveCompletedAssessments(records: CompletedAssessmentRecord[]) {
+  if (typeof localStorage === "undefined") return;
+  localStorage.setItem("careersetu_completed_assessments", JSON.stringify(records));
+}
+
+export function recordAssessmentCompletion(
+  studentEmail: string,
+  studentName: string,
+  results: AssessmentResultData
+) {
+  const current = getCompletedAssessments();
+  const sortedScores = Object.entries(results.categoryScores || {}).sort((a, b) => b[1] - a[1]);
+  const primaryDomain = sortedScores[0]?.[0] || "Technology";
+  const topCareerId = results.recommendedCareerIds?.[0] || "ai-ml-engineer";
+  
+  const existingIdx = current.findIndex((r) => r.studentEmail.toLowerCase() === studentEmail.toLowerCase());
+  const newRecord: CompletedAssessmentRecord = {
+    id: existingIdx !== -1 ? current[existingIdx]!.id : "assess-" + Date.now(),
+    studentEmail,
+    studentName,
+    completedAt: new Date().toISOString(),
+    primaryDomain,
+    topCareer: topCareerId,
+    score: Math.max(...Object.values(results.categoryScores || { tech: 85 })),
+  };
+
+  let updated: CompletedAssessmentRecord[];
+  if (existingIdx !== -1) {
+    updated = [...current];
+    updated[existingIdx] = newRecord;
+  } else {
+    updated = [newRecord, ...current];
+  }
+
+  saveCompletedAssessments(updated);
+  return updated;
+}
+
 export function getAssessmentResults(): AssessmentResultData {
   if (typeof localStorage === "undefined") {
     return calculateAssessmentResults({});

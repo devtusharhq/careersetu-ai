@@ -17,11 +17,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { CAREERS_DATA } from "@/lib/data/careers-data";
-import { EXAMS_DATA } from "@/lib/data/exams-data";
-import { SCHOLARSHIPS_DATA } from "@/lib/data/scholarships-data";
-import { COLLEGES_DATA } from "@/lib/data/colleges-data";
-import { RESOURCES_DATA } from "@/lib/data/resources-data";
+import {
+  getManagedCareers,
+  getManagedExams,
+  getManagedScholarships,
+  getManagedColleges,
+  getManagedResources,
+} from "@/lib/store/admin-content-store";
 
 export function GlobalSearchModal({
   open,
@@ -46,40 +48,46 @@ export function GlobalSearchModal({
 
   const q = query.toLowerCase().trim();
 
+  const careersList = getManagedCareers().filter((c) => c.status !== "ARCHIVED");
+  const examsList = getManagedExams().filter((e) => e.status !== "ARCHIVED");
+  const scholarshipsList = getManagedScholarships().filter((s) => s.status !== "ARCHIVED");
+  const collegesList = getManagedColleges().filter((c) => c.status !== "ARCHIVED");
+  const resourcesList = getManagedResources().filter((r) => r.status !== "ARCHIVED");
+
   const matchingCareers = q
-    ? CAREERS_DATA.filter(
+    ? careersList.filter(
         (c) =>
           c.name.toLowerCase().includes(q) ||
           c.domain.toLowerCase().includes(q) ||
-          c.tags.some((t) => t.toLowerCase().includes(q))
+          (c.tags && c.tags.some((t) => t.toLowerCase().includes(q)))
       ).slice(0, 4)
-    : CAREERS_DATA.slice(0, 3);
+    : careersList.slice(0, 3);
 
   const matchingExams = q
-    ? EXAMS_DATA.filter(
+    ? examsList.filter(
         (e) =>
           e.name.toLowerCase().includes(q) ||
-          e.shortName.toLowerCase().includes(q) ||
-          e.category.toLowerCase().includes(q)
-      ).slice(0, 3)
-    : EXAMS_DATA.slice(0, 2);
+          (e.shortName && e.shortName.toLowerCase().includes(q)) ||
+          e.conductingBody.toLowerCase().includes(q)
+      ).slice(0, 4)
+    : examsList.slice(0, 3);
 
   const matchingScholarships = q
-    ? SCHOLARSHIPS_DATA.filter(
+    ? scholarshipsList.filter(
         (s) =>
           s.name.toLowerCase().includes(q) ||
           s.provider.toLowerCase().includes(q)
-      ).slice(0, 2)
-    : SCHOLARSHIPS_DATA.slice(0, 2);
+      ).slice(0, 3)
+    : scholarshipsList.slice(0, 2);
 
   const matchingColleges = q
-    ? COLLEGES_DATA.filter(
+    ? collegesList.filter(
         (col) =>
           col.name.toLowerCase().includes(q) ||
           col.city.toLowerCase().includes(q) ||
-          col.coursesOffered.some((crs) => crs.toLowerCase().includes(q))
+          (col.popularDegrees && col.popularDegrees.some((deg) => deg.toLowerCase().includes(q)))
       ).slice(0, 3)
-    : COLLEGES_DATA.slice(0, 2);
+    : collegesList.slice(0, 2);
 
   const handleSelect = (path: string) => {
     onOpenChange(false);

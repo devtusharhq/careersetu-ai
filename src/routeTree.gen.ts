@@ -28,6 +28,10 @@ import { Route as AuthenticatedScholarshipsRouteImport } from './routes/_authent
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSkillGapRouteImport } from './routes/_authenticated/skill-gap'
 import { Route as AuthenticatedStudyPlannerRouteImport } from './routes/_authenticated/study-planner'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as StudentLoginRouteImport } from './routes/student.login'
+import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin.dashboard'
+import { Route as AuthenticatedStudentDashboardRouteImport } from './routes/_authenticated/student.dashboard'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -126,11 +130,33 @@ const AuthenticatedStudyPlannerRoute =
     path: '/study-planner',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentLoginRoute = StudentLoginRouteImport.update({
+  id: '/student/login',
+  path: '/student/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminDashboardRoute =
+  AuthenticatedAdminDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedStudentDashboardRoute =
+  AuthenticatedStudentDashboardRouteImport.update({
+    id: '/student/dashboard',
+    path: '/student/dashboard',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/assessment': typeof AuthenticatedAssessmentRoute
   '/assessment-results': typeof AuthenticatedAssessmentResultsRoute
   '/bookmarks': typeof AuthenticatedBookmarksRoute
@@ -146,11 +172,15 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/skill-gap': typeof AuthenticatedSkillGapRoute
   '/study-planner': typeof AuthenticatedStudyPlannerRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/student/login': typeof StudentLoginRoute
+  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/student/dashboard': typeof AuthenticatedStudentDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/assessment': typeof AuthenticatedAssessmentRoute
   '/assessment-results': typeof AuthenticatedAssessmentResultsRoute
   '/bookmarks': typeof AuthenticatedBookmarksRoute
@@ -166,13 +196,17 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/skill-gap': typeof AuthenticatedSkillGapRoute
   '/study-planner': typeof AuthenticatedStudyPlannerRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/student/login': typeof StudentLoginRoute
+  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/student/dashboard': typeof AuthenticatedStudentDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/assessment': typeof AuthenticatedAssessmentRoute
   '/_authenticated/assessment-results': typeof AuthenticatedAssessmentResultsRoute
   '/_authenticated/bookmarks': typeof AuthenticatedBookmarksRoute
@@ -188,6 +222,10 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/skill-gap': typeof AuthenticatedSkillGapRoute
   '/_authenticated/study-planner': typeof AuthenticatedStudyPlannerRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/student/login': typeof StudentLoginRoute
+  '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/student/dashboard': typeof AuthenticatedStudentDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -210,6 +248,10 @@ export interface FileRouteTypes {
     | '/settings'
     | '/skill-gap'
     | '/study-planner'
+    | '/admin/login'
+    | '/student/login'
+    | '/admin/dashboard'
+    | '/student/dashboard'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -230,6 +272,10 @@ export interface FileRouteTypes {
     | '/settings'
     | '/skill-gap'
     | '/study-planner'
+    | '/admin/login'
+    | '/student/login'
+    | '/admin/dashboard'
+    | '/student/dashboard'
   id:
     | '__root__'
     | '/'
@@ -251,12 +297,18 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/skill-gap'
     | '/_authenticated/study-planner'
+    | '/admin/login'
+    | '/student/login'
+    | '/_authenticated/admin/dashboard'
+    | '/_authenticated/student/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  StudentLoginRoute: typeof StudentLoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -394,11 +446,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudyPlannerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/login': {
+      id: '/student/login'
+      path: '/student/login'
+      fullPath: '/student/login'
+      preLoaderRoute: typeof StudentLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/dashboard': {
+      id: '/_authenticated/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/student/dashboard': {
+      id: '/_authenticated/student/dashboard'
+      path: '/student/dashboard'
+      fullPath: '/student/dashboard'
+      preLoaderRoute: typeof AuthenticatedStudentDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedAssessmentRoute: typeof AuthenticatedAssessmentRoute
   AuthenticatedAssessmentResultsRoute: typeof AuthenticatedAssessmentResultsRoute
   AuthenticatedBookmarksRoute: typeof AuthenticatedBookmarksRoute
@@ -414,10 +505,11 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedSkillGapRoute: typeof AuthenticatedSkillGapRoute
   AuthenticatedStudyPlannerRoute: typeof AuthenticatedStudyPlannerRoute
+  AuthenticatedStudentDashboardRoute: typeof AuthenticatedStudentDashboardRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedAssessmentRoute: AuthenticatedAssessmentRoute,
   AuthenticatedAssessmentResultsRoute: AuthenticatedAssessmentResultsRoute,
   AuthenticatedBookmarksRoute: AuthenticatedBookmarksRoute,
@@ -433,6 +525,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedSkillGapRoute: AuthenticatedSkillGapRoute,
   AuthenticatedStudyPlannerRoute: AuthenticatedStudyPlannerRoute,
+  AuthenticatedStudentDashboardRoute: AuthenticatedStudentDashboardRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -442,6 +535,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  StudentLoginRoute: StudentLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { CAREERS_DATA } from "@/lib/data/careers-data";
+import { getManagedCareers } from "@/lib/store/admin-content-store";
 import {
   getAssessmentResults,
   isBookmarked,
@@ -51,13 +51,14 @@ function AssessmentResultsPage() {
   const navigate = useNavigate();
   const [results, setResults] = useState(getAssessmentResults());
   const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>({});
+  const allCareers = getManagedCareers().filter((c) => c.status !== "ARCHIVED");
 
   useEffect(() => {
     const res = getAssessmentResults();
     setResults(res);
 
     const bMap: Record<string, boolean> = {};
-    CAREERS_DATA.forEach((c) => {
+    allCareers.forEach((c) => {
       bMap[c.id] = isBookmarked("careers", c.id);
     });
     setBookmarkedMap(bMap);
@@ -70,7 +71,7 @@ function AssessmentResultsPage() {
   };
 
   const topCareers = results.recommendedCareerIds
-    .map((id) => CAREERS_DATA.find((c) => c.id === id))
+    .map((id) => allCareers.find((c) => c.id === id) || CAREERS_DATA.find((c) => c.id === id))
     .filter(Boolean);
 
   return (

@@ -21,6 +21,8 @@ import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { EDUCATION_LEVELS, GENDERS, INDIAN_STATES, LANGUAGES } from "@/lib/options";
 
+import { setCurrentUser, AppUser } from "@/lib/auth/rbac";
+
 const title = "Log in or sign up — CareerSetu";
 const description =
   "Create your CareerSetu account to start the AI career assessment, track exams and get a personalized study plan.";
@@ -92,19 +94,23 @@ function AuthPage() {
   // Helper for Demo / Guest Login
   async function handleDemoLogin() {
     setDemoLoading(true);
-    const demoProfile = {
+    const demoProfile: AppUser = {
       id: "demo-user-id",
       full_name: "Aditi Kulkarni",
       email: "demo@careersetu.ai",
+      role: "STUDENT",
       phone: "9876543210",
       age: "20",
       gender: "Female",
       state: "Maharashtra",
       city: "Pune",
-      current_education: "btech_cs",
-      preferred_language: "english",
+      current_education: "Graduate (B.Tech CS)",
+      preferred_language: "English",
+      status: "ACTIVE",
+      registeredAt: "2026-03-01T00:00:00.000Z",
+      lastActive: new Date().toISOString(),
     };
-    localStorage.setItem("careersetu_demo_user", JSON.stringify(demoProfile));
+    setCurrentUser(demoProfile);
     toast.success("Signed in as Demo Student!");
     setDemoLoading(false);
     navigate({ to: "/dashboard" });
@@ -140,6 +146,16 @@ function AuthPage() {
       }
 
       if (data?.session) {
+        const studentUser: AppUser = {
+          id: data.session.user.id,
+          email: data.session.user.email || email,
+          full_name: data.session.user.user_metadata?.full_name || "Student",
+          role: "STUDENT",
+          status: "ACTIVE",
+          registeredAt: new Date().toISOString(),
+          lastActive: new Date().toISOString(),
+        };
+        setCurrentUser(studentUser);
         toast.success("Welcome back!");
         navigate({ to: "/dashboard" });
       }
@@ -167,14 +183,24 @@ function AuthPage() {
 
     const { email, password, ...meta } = parsed.data;
 
-    // Store signup data in local storage for instant dashboard access
-    const tempProfile = {
+    // Store signup data in local storage with strict STUDENT role
+    const tempProfile: AppUser = {
       id: "user-" + Date.now(),
       email,
-      ...meta,
+      full_name: meta.full_name,
+      role: "STUDENT", // Guaranteed default role
+      phone: meta.phone,
       age: String(meta.age),
+      gender: meta.gender,
+      state: meta.state,
+      city: meta.city,
+      current_education: meta.current_education,
+      preferred_language: meta.preferred_language,
+      status: "ACTIVE",
+      registeredAt: new Date().toISOString(),
+      lastActive: new Date().toISOString(),
     };
-    localStorage.setItem("careersetu_demo_user", JSON.stringify(tempProfile));
+    setCurrentUser(tempProfile);
 
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -426,11 +452,14 @@ function AuthPage() {
           )}
         </Card>
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">
+        <div className="mt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-muted-foreground gap-2">
           <Link to="/" className="hover:text-foreground underline">
             ← Back to home
           </Link>
-        </p>
+          <Link to="/admin/login" className="text-amber-500 hover:underline font-semibold flex items-center gap-1">
+            Admin Management Gateway →
+          </Link>
+        </div>
       </div>
     </div>
   );

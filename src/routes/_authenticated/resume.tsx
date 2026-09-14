@@ -376,7 +376,7 @@ function ResumeBuilderPage() {
               <Wand2 className="size-4 text-primary" /> 5. Core Technical Skills
             </h3>
             <Input
-              value={resume.skills.technical.join(", ")}
+              value={resume.skills?.technical?.join(", ") || ""}
               onChange={(e) =>
                 setResume({
                   ...resume,
@@ -497,11 +497,11 @@ function ResumeBuilderPage() {
               <div className="text-xs text-slate-700 space-y-1 pt-1">
                 <p>
                   <strong className="text-slate-900 font-semibold">Technical: </strong>
-                  {resume.skills.technical.join(", ")}
+                  {resume.skills?.technical?.join(", ") || "Python, React, SQL"}
                 </p>
                 <p>
                   <strong className="text-slate-900 font-semibold">Languages: </strong>
-                  {resume.languages.join(", ")}
+                  {resume.languages?.join(", ") || "English, Hindi"}
                 </p>
               </div>
             </div>

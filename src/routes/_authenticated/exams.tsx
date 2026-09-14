@@ -34,7 +34,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EXAMS_DATA, GovernmentExamItem } from "@/lib/data/exams-data";
+import { getManagedExams } from "@/lib/store/admin-content-store";
+import { GovernmentExamItem } from "@/lib/data/exams-data";
 import { isBookmarked, toggleBookmark } from "@/lib/store/careersetu-store";
 
 export const Route = createFileRoute("/_authenticated/exams")({
@@ -67,10 +68,14 @@ function ExamsFinderPage() {
   const [selectedStatus, setSelectedStatus] = useState("All Statuses");
   const [selectedExam, setSelectedExam] = useState<GovernmentExamItem | null>(null);
   const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>({});
+  const [examsList, setExamsList] = useState<GovernmentExamItem[]>([]);
 
   useEffect(() => {
+    const live = getManagedExams().filter((e) => e.status !== "ARCHIVED");
+    setExamsList(live);
+
     const bMap: Record<string, boolean> = {};
-    EXAMS_DATA.forEach((e) => {
+    live.forEach((e) => {
       bMap[e.id] = isBookmarked("exams", e.id);
     });
     setBookmarkedMap(bMap);
@@ -83,14 +88,14 @@ function ExamsFinderPage() {
   };
 
   const filteredExams = useMemo(() => {
-    return EXAMS_DATA.filter((e) => {
+    return examsList.filter((e) => {
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !q ||
         e.name.toLowerCase().includes(q) ||
-        e.shortName.toLowerCase().includes(q) ||
-        e.conductingBody.toLowerCase().includes(q) ||
-        e.category.toLowerCase().includes(q);
+        (e.shortName && e.shortName.toLowerCase().includes(q)) ||
+        (e.conductingBody && e.conductingBody.toLowerCase().includes(q)) ||
+        (e.category && e.category.toLowerCase().includes(q));
 
       const matchesCat =
         selectedCategory === "All Categories" || e.category === selectedCategory;
@@ -100,7 +105,7 @@ function ExamsFinderPage() {
 
       return matchesSearch && matchesCat && matchesStatus;
     });
-  }, [searchQuery, selectedCategory, selectedStatus]);
+  }, [examsList, searchQuery, selectedCategory, selectedStatus]);
 
   const resetFilters = () => {
     setSearchQuery("");

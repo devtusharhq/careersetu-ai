@@ -26,7 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RESOURCES_DATA, LearningResourceItem } from "@/lib/data/resources-data";
+import { getManagedResources } from "@/lib/store/admin-content-store";
+import { LearningResourceItem } from "@/lib/data/resources-data";
 import { isBookmarked, toggleBookmark } from "@/lib/store/careersetu-store";
 
 export const Route = createFileRoute("/_authenticated/resources")({
@@ -56,10 +57,14 @@ function LearningResourcesPage() {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>({});
   const [completedMap, setCompletedMap] = useState<Record<string, boolean>>({});
+  const [resourcesList, setResourcesList] = useState<LearningResourceItem[]>([]);
 
   useEffect(() => {
+    const live = getManagedResources().filter((r) => r.status !== "ARCHIVED");
+    setResourcesList(live);
+
     const bMap: Record<string, boolean> = {};
-    RESOURCES_DATA.forEach((r) => {
+    live.forEach((r) => {
       bMap[r.id] = isBookmarked("resources", r.id);
     });
     setBookmarkedMap(bMap);
@@ -90,21 +95,21 @@ function LearningResourcesPage() {
   };
 
   const filteredResources = useMemo(() => {
-    return RESOURCES_DATA.filter((r) => {
+    return resourcesList.filter((r) => {
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !q ||
         r.title.toLowerCase().includes(q) ||
-        r.targetExamOrCareer.toLowerCase().includes(q) ||
-        r.authorOrProvider.toLowerCase().includes(q) ||
-        r.tags.some((t) => t.toLowerCase().includes(q));
+        (r.authorOrProvider && r.authorOrProvider.toLowerCase().includes(q)) ||
+        (r.targetExamOrCareer && r.targetExamOrCareer.toLowerCase().includes(q)) ||
+        (r.tags && r.tags.some((t) => t.toLowerCase().includes(q)));
 
       const matchesCat =
         selectedCategory === "All Categories" || r.category === selectedCategory;
 
       return matchesSearch && matchesCat;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [resourcesList, searchQuery, selectedCategory]);
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto py-2">

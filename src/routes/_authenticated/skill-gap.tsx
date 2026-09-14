@@ -23,7 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CAREERS_DATA, CareerItem } from "@/lib/data/careers-data";
+import { getManagedCareers } from "@/lib/store/admin-content-store";
+import { CareerItem } from "@/lib/data/careers-data";
 import {
   getSkillGapStore,
   saveSkillGapStore,
@@ -47,20 +48,32 @@ const STATUS_OPTIONS: SkillStatus[] = ["Not Started", "Learning", "Intermediate"
 
 function SkillGapPage() {
   const [store, setStore] = useState(getSkillGapStore());
+  const [careersList, setCareersList] = useState<CareerItem[]>(() => {
+    const live = getManagedCareers().filter((c) => c.status !== "ARCHIVED");
+    return live.length > 0 ? live : [];
+  });
 
   useEffect(() => {
+    const live = getManagedCareers().filter((c) => c.status !== "ARCHIVED");
+    setCareersList(live);
     setStore(getSkillGapStore());
   }, []);
 
   const selectedCareer =
-    CAREERS_DATA.find((c) => c.id === store.targetCareerId) ?? CAREERS_DATA[0]!;
+    careersList.find((c) => c.id === store.targetCareerId) ??
+    careersList[0] ?? {
+      id: "ai-ml-engineer",
+      name: "AI & Machine Learning Engineer",
+      domain: "Technology",
+      requiredSkills: ["Python", "Machine Learning", "Deep Learning", "SQL", "Statistics"],
+    };
 
   const handleCareerChange = (careerId: string) => {
-    const career = CAREERS_DATA.find((c) => c.id === careerId);
+    const career = careersList.find((c) => c.id === careerId);
     if (!career) return;
 
     const newStatuses: Record<string, SkillStatus> = {};
-    career.requiredSkills.forEach((s) => {
+    (career.requiredSkills || []).forEach((s) => {
       newStatuses[s] = store.skillStatuses[s] ?? "Not Started";
     });
 
@@ -80,19 +93,21 @@ function SkillGapPage() {
     toast.success(`Updated ${skill} to ${status}`);
   };
 
-  const skillsList = selectedCareer.requiredSkills;
+  const skillsList = selectedCareer.requiredSkills || ["Python", "SQL", "Problem Solving"];
   const advancedCount = skillsList.filter((s) => store.skillStatuses[s] === "Advanced").length;
   const intermediateCount = skillsList.filter((s) => store.skillStatuses[s] === "Intermediate").length;
   const learningCount = skillsList.filter((s) => store.skillStatuses[s] === "Learning").length;
 
-  const readinessScore = Math.min(
-    100,
-    Math.round(
-      ((advancedCount * 1.0 + intermediateCount * 0.65 + learningCount * 0.3) /
-        skillsList.length) *
-        100
-    )
-  );
+  const readinessScore = skillsList.length > 0
+    ? Math.min(
+        100,
+        Math.round(
+          ((advancedCount * 1.0 + intermediateCount * 0.65 + learningCount * 0.3) /
+            skillsList.length) *
+            100
+        )
+      )
+    : 50;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto py-2">
@@ -118,12 +133,12 @@ function SkillGapPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
             <span className="text-[11px] font-semibold text-muted-foreground block">Select Target Dream Career:</span>
-            <Select value={store.targetCareerId} onValueChange={handleCareerChange}>
+            <Select value={selectedCareer.id} onValueChange={handleCareerChange}>
               <SelectTrigger className="w-72 h-10 rounded-xl text-xs font-semibold bg-background">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="rounded-2xl max-h-64">
-                {CAREERS_DATA.map((c) => (
+                {careersList.map((c) => (
                   <SelectItem key={c.id} value={c.id} className="text-xs">
                     {c.name} ({c.domain})
                   </SelectItem>

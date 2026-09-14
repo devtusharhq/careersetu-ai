@@ -54,41 +54,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { Language, getTranslation } from "@/lib/i18n/translations";
+import { getCurrentUser, isAdmin, AppUser } from "@/lib/auth/rbac";
+import { getBroadcastNotifications } from "@/lib/store/admin-content-store";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
-    const demo = typeof localStorage !== "undefined" ? localStorage.getItem("careersetu_demo_user") : null;
-    if (demo) {
-      try {
-        const parsed = JSON.parse(demo);
-        if (parsed) return { user: parsed };
-      } catch {}
-    }
-
-    try {
-      const sessionPromise = supabase.auth.getSession();
-      const timeoutPromise = new Promise<{ data: { session: null } }>((resolve) =>
-        setTimeout(() => resolve({ data: { session: null } }), 60)
-      );
-      const { data } = await Promise.race([sessionPromise, timeoutPromise]);
-      if (data?.session?.user) {
-        return { user: data.session.user };
-      }
-    } catch {}
-
-    const defaultUser = {
-      id: "demo-user-id",
-      full_name: "Tushar Devendra",
-      email: "tushar@careersetu.ai",
-      city: "Mumbai",
-      current_education: "class_12",
-      role: "admin", // Demo user has admin capabilities for evaluation
-    };
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem("careersetu_demo_user", JSON.stringify(defaultUser));
-    }
-    return { user: defaultUser };
+    const user = getCurrentUser();
+    return { user };
   },
   component: AuthenticatedLayout,
 });
@@ -104,15 +77,10 @@ function AuthenticatedLayout() {
   const [currentLang, setCurrentLang] = useState<Language>("english");
   const [unreadNotifications, setUnreadNotifications] = useState(3);
 
-  let userName = "Student";
-  if (typeof localStorage !== "undefined") {
-    const demo = localStorage.getItem("careersetu_demo_user");
-    if (demo) {
-      try {
-        userName = JSON.parse(demo).full_name || "Student";
-      } catch {}
-    }
-  }
+  const currentUser = getCurrentUser();
+  const userIsAdmin = isAdmin(currentUser);
+  const userName = currentUser.full_name || "Student";
+  const broadcasts = getBroadcastNotifications();
 
   useEffect(() => {
     if (typeof localStorage !== "undefined") {
@@ -262,15 +230,16 @@ function AuthenticatedLayout() {
                     </button>
                   )}
                 </div>
-                <div className="space-y-2 text-xs mt-3">
-                  <div className="p-2.5 rounded-xl bg-primary/5 border border-primary/15">
-                    <p className="font-semibold text-foreground">UPSC CSE 2026 Registration Open</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">Apply before official deadline on upsc.gov.in</p>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-accent/40 border border-border/50">
-                    <p className="font-semibold text-foreground">AICTE Pragati Scholarship Closing</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">₹50,000 grant application ends soon</p>
-                  </div>
+                <div className="space-y-2 text-xs mt-3 max-h-64 overflow-y-auto pr-1">
+                  {broadcasts.map((b) => (
+                    <div key={b.id} className="p-2.5 rounded-xl bg-primary/5 border border-primary/20">
+                      <div className="flex items-center justify-between gap-1 mb-0.5">
+                        <p className="font-semibold text-foreground text-xs">{b.title}</p>
+                        <Badge variant="outline" className="text-[9px] px-1 py-0 border-primary/30 text-primary">{b.category}</Badge>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground">{b.message}</p>
+                    </div>
+                  ))}
                   <div className="p-2.5 rounded-xl bg-accent/40 border border-border/50">
                     <p className="font-semibold text-foreground">Today's Study Goal: 2 Tasks Remaining</p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">Complete your daily scheduled milestones</p>
@@ -302,10 +271,12 @@ function AuthenticatedLayout() {
                   <Settings className="mr-2 size-3.5 text-primary" />
                   {getTranslation(currentLang, "settings")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate({ to: "/admin" as any })} className="rounded-xl cursor-pointer text-xs font-medium text-amber-500">
-                  <Shield className="mr-2 size-3.5 text-amber-500" />
-                  {getTranslation(currentLang, "admin")}
-                </DropdownMenuItem>
+                {userIsAdmin && (
+                  <DropdownMenuItem onClick={() => navigate({ to: "/admin" as any })} className="rounded-xl cursor-pointer text-xs font-medium text-amber-500 bg-amber-500/10">
+                    <Shield className="mr-2 size-3.5 text-amber-500" />
+                    Admin Management Console
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator className="my-1" />
                 <DropdownMenuItem onSelect={signOut} className="rounded-xl text-destructive focus:text-destructive cursor-pointer text-xs">
                   <LogOut className="mr-2 size-3.5" />
@@ -374,24 +345,9 @@ function AuthenticatedLayout() {
               })}
             </div>
 
-            {/* Admin & Account Group */}
+            {/* Account Group */}
             <div className="space-y-1 pt-3 border-t border-border/60">
-              <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">System & Admin</p>
-              <Link
-                to="/admin"
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
-                  currentPath.startsWith("/admin")
-                    ? "bg-amber-500 text-white font-semibold shadow-xs"
-                    : "text-amber-500/90 hover:text-amber-500 hover:bg-amber-500/10"
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Shield className="size-4 text-amber-500" />
-                  <span>Admin Panel</span>
-                </div>
-                <Badge variant="outline" className="text-[9px] border-amber-500/30 text-amber-500">Live</Badge>
-              </Link>
+              <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Account</p>
               <Link
                 to="/profile"
                 onClick={() => setSidebarOpen(false)}

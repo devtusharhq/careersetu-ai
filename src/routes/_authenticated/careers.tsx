@@ -37,7 +37,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CAREERS_DATA, CareerItem } from "@/lib/data/careers-data";
+import { getManagedCareers } from "@/lib/store/admin-content-store";
+import { CareerItem } from "@/lib/data/careers-data";
 import {
   isBookmarked,
   toggleBookmark,
@@ -80,6 +81,9 @@ function CareersExplorerPage() {
   const [selectedSalary, setSelectedSalary] = useState("All Salaries");
   const [sortBy, setSortBy] = useState<"name" | "salary-high" | "demand">("salary-high");
 
+  // Live Careers Data from Store
+  const [careersList, setCareersList] = useState<CareerItem[]>([]);
+
   // Selected Career for Detail View Modal
   const [selectedCareer, setSelectedCareer] = useState<CareerItem | null>(null);
 
@@ -91,8 +95,11 @@ function CareersExplorerPage() {
   const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
+    const live = getManagedCareers().filter((c) => c.status !== "ARCHIVED");
+    setCareersList(live);
+
     const bMap: Record<string, boolean> = {};
-    CAREERS_DATA.forEach((c) => {
+    live.forEach((c) => {
       bMap[c.id] = isBookmarked("careers", c.id);
     });
     setBookmarkedMap(bMap);
@@ -118,7 +125,7 @@ function CareersExplorerPage() {
   };
 
   const filteredCareers = useMemo(() => {
-    return CAREERS_DATA.filter((c) => {
+    return careersList.filter((c) => {
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !q ||

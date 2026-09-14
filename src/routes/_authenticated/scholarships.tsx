@@ -25,7 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SCHOLARSHIPS_DATA, ScholarshipItem } from "@/lib/data/scholarships-data";
+import { getManagedScholarships } from "@/lib/store/admin-content-store";
+import { ScholarshipItem } from "@/lib/data/scholarships-data";
 import { isBookmarked, toggleBookmark } from "@/lib/store/careersetu-store";
 
 export const Route = createFileRoute("/_authenticated/scholarships")({
@@ -53,10 +54,14 @@ function ScholarshipsFinderPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>({});
+  const [scholarshipsList, setScholarshipsList] = useState<ScholarshipItem[]>([]);
 
   useEffect(() => {
+    const live = getManagedScholarships().filter((s) => s.status !== "ARCHIVED");
+    setScholarshipsList(live);
+
     const bMap: Record<string, boolean> = {};
-    SCHOLARSHIPS_DATA.forEach((s) => {
+    live.forEach((s) => {
       bMap[s.id] = isBookmarked("scholarships", s.id);
     });
     setBookmarkedMap(bMap);
@@ -69,20 +74,20 @@ function ScholarshipsFinderPage() {
   };
 
   const filteredScholarships = useMemo(() => {
-    return SCHOLARSHIPS_DATA.filter((s) => {
+    return scholarshipsList.filter((s) => {
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !q ||
         s.name.toLowerCase().includes(q) ||
         s.provider.toLowerCase().includes(q) ||
-        s.eligibleStates.some((st) => st.toLowerCase().includes(q));
+        (s.eligibleStates && s.eligibleStates.some((st) => st.toLowerCase().includes(q)));
 
       const matchesCat =
         selectedCategory === "All Categories" || s.category === selectedCategory;
 
       return matchesSearch && matchesCat;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [scholarshipsList, searchQuery, selectedCategory]);
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto py-2">

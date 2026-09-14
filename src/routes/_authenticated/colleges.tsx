@@ -23,7 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { COLLEGES_DATA, CollegeItem } from "@/lib/data/colleges-data";
+import { getManagedColleges } from "@/lib/store/admin-content-store";
+import { CollegeItem } from "@/lib/data/colleges-data";
 import { isBookmarked, toggleBookmark } from "@/lib/store/careersetu-store";
 
 export const Route = createFileRoute("/_authenticated/colleges")({
@@ -51,10 +52,14 @@ function CollegesDirectoryPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("All Types");
   const [bookmarkedMap, setBookmarkedMap] = useState<Record<string, boolean>>({});
+  const [collegesList, setCollegesList] = useState<CollegeItem[]>([]);
 
   useEffect(() => {
+    const live = getManagedColleges().filter((c) => c.status !== "ARCHIVED");
+    setCollegesList(live);
+
     const bMap: Record<string, boolean> = {};
-    COLLEGES_DATA.forEach((col) => {
+    live.forEach((col) => {
       bMap[col.id] = isBookmarked("colleges", col.id);
     });
     setBookmarkedMap(bMap);
@@ -67,22 +72,22 @@ function CollegesDirectoryPage() {
   };
 
   const filteredColleges = useMemo(() => {
-    return COLLEGES_DATA.filter((col) => {
+    return collegesList.filter((col) => {
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !q ||
         col.name.toLowerCase().includes(q) ||
         col.city.toLowerCase().includes(q) ||
         col.state.toLowerCase().includes(q) ||
-        col.popularDegrees.some((deg) => deg.toLowerCase().includes(q)) ||
-        col.acceptedExams.some((ex) => ex.toLowerCase().includes(q));
+        (col.popularDegrees && col.popularDegrees.some((deg) => deg.toLowerCase().includes(q))) ||
+        (col.acceptedExams && col.acceptedExams.some((ex) => ex.toLowerCase().includes(q)));
 
       const matchesType =
         selectedType === "All Types" || col.type === selectedType;
 
       return matchesSearch && matchesType;
     });
-  }, [searchQuery, selectedType]);
+  }, [collegesList, searchQuery, selectedType]);
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto py-2">
