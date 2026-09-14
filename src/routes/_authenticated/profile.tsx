@@ -25,6 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { getCurrentUser, setCurrentUser, AppUser } from "@/lib/auth/rbac";
+
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
@@ -39,52 +41,46 @@ export const Route = createFileRoute("/_authenticated/profile")({
 });
 
 function ProfilePage() {
+  const currentUser = getCurrentUser();
   const [profile, setProfile] = useState({
-    fullName: "Tushar Devendra",
-    email: "tushar@careersetu.ai",
-    phone: "+91 98765 43210",
-    city: "Mumbai",
-    state: "Maharashtra",
-    educationLevel: "class_12",
-    stream: "Science (PCM)",
+    fullName: currentUser.full_name || "Student User",
+    email: currentUser.email || "student@careersetu.ai",
+    phone: currentUser.phone || "+91 98765 43210",
+    city: currentUser.city || "Mumbai",
+    state: currentUser.state || "Maharashtra",
+    educationLevel: currentUser.current_education || "Graduate (B.Tech CS)",
+    stream: "Computer Science & AI",
     targetCareer: "AI & Machine Learning Engineer",
-    preferredLanguage: "english",
+    preferredLanguage: currentUser.preferred_language || "English",
   });
 
   useEffect(() => {
-    if (typeof localStorage !== "undefined") {
-      const demo = localStorage.getItem("careersetu_demo_user");
-      if (demo) {
-        try {
-          const parsed = JSON.parse(demo);
-          setProfile((prev) => ({
-            ...prev,
-            fullName: parsed.full_name || prev.fullName,
-            email: parsed.email || prev.email,
-            city: parsed.city || prev.city,
-            educationLevel: parsed.current_education || prev.educationLevel,
-          }));
-        } catch {}
-      }
-    }
+    const user = getCurrentUser();
+    setProfile({
+      fullName: user.full_name || "Student User",
+      email: user.email || "student@careersetu.ai",
+      phone: user.phone || "+91 98765 43210",
+      city: user.city || "Mumbai",
+      state: user.state || "Maharashtra",
+      educationLevel: user.current_education || "Graduate (B.Tech CS)",
+      stream: "Computer Science & AI",
+      targetCareer: "AI & Machine Learning Engineer",
+      preferredLanguage: user.preferred_language || "English",
+    });
   }, []);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    if (typeof localStorage !== "undefined") {
-      const updatedUser = {
-        id: "demo-user-id",
-        full_name: profile.fullName,
-        email: profile.email,
-        phone: profile.phone,
-        city: profile.city,
-        state: profile.state,
-        current_education: profile.educationLevel,
-        preferred_language: profile.preferredLanguage,
-        role: "admin",
-      };
-      localStorage.setItem("careersetu_demo_user", JSON.stringify(updatedUser));
-    }
+    const updatedUser: AppUser = {
+      ...currentUser,
+      full_name: profile.fullName,
+      phone: profile.phone,
+      city: profile.city,
+      state: profile.state,
+      current_education: profile.educationLevel,
+      preferred_language: profile.preferredLanguage,
+    };
+    setCurrentUser(updatedUser);
     toast.success("Profile updated successfully!");
   };
 

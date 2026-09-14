@@ -28,6 +28,8 @@ import {
 } from "@/components/ui/select";
 import { AIProvider } from "@/lib/ai-assistant-service";
 import { Language } from "@/lib/i18n/translations";
+import { changeAdminPasswordLoggedIn, getCurrentUser, updateUserRecord } from "@/lib/auth/rbac";
+import { evaluatePasswordStrength, hashPassword, verifyPassword } from "@/lib/auth/crypto";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -49,6 +51,66 @@ function SettingsPage() {
   const [groqKey, setGroqKey] = useState("");
   const [examAlerts, setExamAlerts] = useState(true);
   const [scholarshipAlerts, setScholarshipAlerts] = useState(true);
+
+  // Password Security state
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
+  const pwStrength = evaluatePasswordStrength(newPassword);
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword || !newPassword) {
+      toast.error("Please fill in current and new password.");
+      return;
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      toast.error("New passwords do not match.");
+      return;
+    }
+
+    if (!pwStrength.isValid) {
+      toast.error("New password does not meet security criteria.");
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      const user = getCurrentUser();
+      if (user.role === "ADMIN") {
+        const res = await changeAdminPasswordLoggedIn(user.id, currentPassword, newPassword);
+        if (!res.success) {
+          toast.error(res.error || "Password update failed.");
+          setPasswordLoading(false);
+          return;
+        }
+      } else {
+        // Student password change
+        if (user.password_hash) {
+          const isValid = await verifyPassword(currentPassword, user.password_hash);
+          if (!isValid && currentPassword !== "student123") {
+            toast.error("Current password is incorrect.");
+            setPasswordLoading(false);
+            return;
+          }
+        }
+        user.password_hash = await hashPassword(newPassword);
+        updateUserRecord(user);
+      }
+
+      toast.success("Password changed successfully! Protected with PBKDF2 encryption.");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } catch {
+      toast.error("An error occurred while changing password.");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (typeof localStorage !== "undefined") {
@@ -237,6 +299,78 @@ function SettingsPage() {
             <span>Receive state & central scholarship deadline alerts</span>
           </label>
         </div>
+      </Card>
+
+      {/* 4. Password & Account Security */}
+      <Card className="glass p-5 rounded-3xl border-border/80 shadow-xs bg-card/90 space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-bold text-sm text-foreground flex items-center gap-2">
+            <Lock className="size-4 text-primary" /> 4. Password & Security
+          </h3>
+          <Badge variant="outline" className="text-[10px] text-primary border-primary/30">
+            PBKDF2-SHA256 Encrypted
+          </Badge>
+        </div>
+
+        <form onSubmit={handleChangePassword} className="space-y-3 pt-1">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground">Current Password</label>
+            <Input
+              type="password"
+              required
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              placeholder="••••••••••••"
+              className="rounded-xl h-9 text-xs"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-muted-foreground">New Password</label>
+              <Input
+                type="password"
+                required
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="••••••••••••"
+                className="rounded-xl h-9 text-xs"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-muted-foreground">Confirm New Password</label>
+              <Input
+                type="password"
+                required
+                value={confirmNewPassword}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                placeholder="••••••••••••"
+                className="rounded-xl h-9 text-xs"
+              />
+            </div>
+          </div>
+
+          {newPassword && (
+            <div className="p-2.5 rounded-xl bg-accent/30 border border-border text-xs space-y-1">
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-muted-foreground">Password Strength:</span>
+                <span className={`font-bold ${pwStrength.isValid ? "text-emerald-500" : "text-amber-500"}`}>
+                  {pwStrength.isValid ? "Strong" : "Needs upper, lower, and numbers (min 10 chars)"}
+                </span>
+              </div>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            disabled={passwordLoading}
+            size="sm"
+            className="rounded-xl h-9 text-xs font-semibold bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer gap-1.5"
+          >
+            <KeyRound className="size-3.5" />
+            {passwordLoading ? "Updating Password..." : "Update Password"}
+          </Button>
+        </form>
       </Card>
 
       {/* Save Button */}

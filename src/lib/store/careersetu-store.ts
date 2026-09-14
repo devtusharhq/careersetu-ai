@@ -8,6 +8,7 @@ import {
   calculateAssessmentResults,
   AssessmentResultData,
 } from "../data/assessment-questions";
+import { getUserScopedKey } from "../auth/rbac";
 
 // BOOKMARKS
 export interface BookmarkStore {
@@ -29,7 +30,8 @@ const DEFAULT_BOOKMARKS: BookmarkStore = {
 export function getBookmarks(): BookmarkStore {
   if (typeof localStorage === "undefined") return DEFAULT_BOOKMARKS;
   try {
-    const raw = localStorage.getItem("careersetu_bookmarks");
+    const key = getUserScopedKey("careersetu_bookmarks");
+    const raw = localStorage.getItem(key) || localStorage.getItem("careersetu_bookmarks");
     if (raw) return JSON.parse(raw);
   } catch {}
   return DEFAULT_BOOKMARKS;
@@ -37,7 +39,8 @@ export function getBookmarks(): BookmarkStore {
 
 export function saveBookmarks(bm: BookmarkStore) {
   if (typeof localStorage === "undefined") return;
-  localStorage.setItem("careersetu_bookmarks", JSON.stringify(bm));
+  const key = getUserScopedKey("careersetu_bookmarks");
+  localStorage.setItem(key, JSON.stringify(bm));
 }
 
 export function toggleBookmark(
@@ -124,7 +127,8 @@ const DEFAULT_STUDY_TASKS: StudyTask[] = [
 export function getStudyTasks(): StudyTask[] {
   if (typeof localStorage === "undefined") return DEFAULT_STUDY_TASKS;
   try {
-    const raw = localStorage.getItem("careersetu_study_tasks");
+    const key = getUserScopedKey("careersetu_study_tasks");
+    const raw = localStorage.getItem(key) || localStorage.getItem("careersetu_study_tasks");
     if (raw) return JSON.parse(raw);
   } catch {}
   return DEFAULT_STUDY_TASKS;
@@ -132,7 +136,8 @@ export function getStudyTasks(): StudyTask[] {
 
 export function saveStudyTasks(tasks: StudyTask[]) {
   if (typeof localStorage === "undefined") return;
-  localStorage.setItem("careersetu_study_tasks", JSON.stringify(tasks));
+  const key = getUserScopedKey("careersetu_study_tasks");
+  localStorage.setItem(key, JSON.stringify(tasks));
 }
 
 // Auto-reschedule missed overdue tasks to today without destroying completed ones
@@ -163,7 +168,8 @@ export function rescheduleMissedTasks(): { rescheduledCount: number } {
 export function getStoredAssessmentAnswers(): Record<number, number> {
   if (typeof localStorage === "undefined") return {};
   try {
-    const raw = localStorage.getItem("careersetu_assessment_answers");
+    const key = getUserScopedKey("careersetu_assessment_answers");
+    const raw = localStorage.getItem(key);
     if (raw) return JSON.parse(raw);
   } catch {}
   return {};
@@ -171,7 +177,8 @@ export function getStoredAssessmentAnswers(): Record<number, number> {
 
 export function saveAssessmentAnswers(answers: Record<number, number>) {
   if (typeof localStorage === "undefined") return;
-  localStorage.setItem("careersetu_assessment_answers", JSON.stringify(answers));
+  const key = getUserScopedKey("careersetu_assessment_answers");
+  localStorage.setItem(key, JSON.stringify(answers));
 }
 
 export interface CompletedAssessmentRecord {
@@ -266,7 +273,8 @@ export function getAssessmentResults(): AssessmentResultData {
     return calculateAssessmentResults({});
   }
   try {
-    const raw = localStorage.getItem("careersetu_assessment_results");
+    const key = getUserScopedKey("careersetu_assessment_results");
+    const raw = localStorage.getItem(key);
     if (raw) return JSON.parse(raw);
   } catch {}
   // Default calculate from answers
@@ -277,7 +285,8 @@ export function getAssessmentResults(): AssessmentResultData {
 
 export function saveAssessmentResults(results: AssessmentResultData) {
   if (typeof localStorage === "undefined") return;
-  localStorage.setItem("careersetu_assessment_results", JSON.stringify(results));
+  const key = getUserScopedKey("careersetu_assessment_results");
+  localStorage.setItem(key, JSON.stringify(results));
 }
 
 // RESUME BUILDER STATE
@@ -450,7 +459,8 @@ export const DEFAULT_RESUME_DATA: ResumeData = {
 export function getResumeData(): ResumeData {
   if (typeof localStorage === "undefined") return DEFAULT_RESUME_DATA;
   try {
-    const raw = localStorage.getItem("careersetu_resume_data");
+    const key = getUserScopedKey("careersetu_resume_data");
+    const raw = localStorage.getItem(key) || localStorage.getItem("careersetu_resume_data");
     if (raw) return JSON.parse(raw);
   } catch {}
   return DEFAULT_RESUME_DATA;
@@ -458,7 +468,8 @@ export function getResumeData(): ResumeData {
 
 export function saveResumeData(data: ResumeData) {
   if (typeof localStorage === "undefined") return;
-  localStorage.setItem("careersetu_resume_data", JSON.stringify(data));
+  const key = getUserScopedKey("careersetu_resume_data");
+  localStorage.setItem(key, JSON.stringify(data));
 }
 
 // SKILL GAP STATE
@@ -484,7 +495,8 @@ export function getSkillGapStore(): SkillGapStore {
   };
   if (typeof localStorage === "undefined") return defaultStore;
   try {
-    const raw = localStorage.getItem("careersetu_skill_gap");
+    const key = getUserScopedKey("careersetu_skill_gap");
+    const raw = localStorage.getItem(key) || localStorage.getItem("careersetu_skill_gap");
     if (raw) return JSON.parse(raw);
   } catch {}
   return defaultStore;
@@ -492,5 +504,6 @@ export function getSkillGapStore(): SkillGapStore {
 
 export function saveSkillGapStore(store: SkillGapStore) {
   if (typeof localStorage === "undefined") return;
-  localStorage.setItem("careersetu_skill_gap", JSON.stringify(store));
+  const key = getUserScopedKey("careersetu_skill_gap");
+  localStorage.setItem(key, JSON.stringify(store));
 }

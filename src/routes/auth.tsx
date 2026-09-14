@@ -21,7 +21,7 @@ import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { EDUCATION_LEVELS, GENDERS, INDIAN_STATES, LANGUAGES } from "@/lib/options";
 
-import { setCurrentUser, AppUser } from "@/lib/auth/rbac";
+import { setCurrentUser, AppUser, initiateStudentLogin, registerStudentUser, getUserByEmail } from "@/lib/auth/rbac";
 
 const title = "Log in or sign up — CareerSetu";
 const description =
@@ -92,28 +92,14 @@ function AuthPage() {
   const [emailSent, setEmailSent] = useState(false);
 
   // Helper for Demo / Guest Login
-  async function handleDemoLogin() {
+  function handleDemoLogin() {
     setDemoLoading(true);
-    const demoProfile: AppUser = {
-      id: "demo-user-id",
-      full_name: "Aditi Kulkarni",
-      email: "demo@careersetu.ai",
-      role: "STUDENT",
-      phone: "9876543210",
-      age: "20",
-      gender: "Female",
-      state: "Maharashtra",
-      city: "Pune",
-      current_education: "Graduate (B.Tech CS)",
-      preferred_language: "English",
-      status: "ACTIVE",
-      registeredAt: "2026-03-01T00:00:00.000Z",
-      lastActive: new Date().toISOString(),
-    };
-    setCurrentUser(demoProfile);
-    toast.success("Signed in as Demo Student!");
+    const res = authenticateStudent("aditi.kulkarni@gmail.com", "student123");
+    if (res.success && res.user) {
+      toast.success("Signed in as Demo Student (Aditi Kulkarni)!");
+      navigate({ to: "/dashboard" });
+    }
     setDemoLoading(false);
-    navigate({ to: "/dashboard" });
   }
 
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
@@ -123,44 +109,25 @@ function AuthPage() {
     const password = String(form.get("password") ?? "");
 
     if (!email || !password) {
-      toast.error("Please enter email and password");
+      toast.error("Please enter both email and password");
       return;
     }
 
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        // Fallback for custom demo credentials or offline mode
-        if (email.toLowerCase().includes("demo") || password === "demo1234") {
-          handleDemoLogin();
-          return;
+      const res = await initiateStudentLogin(email, password);
+      if (res.success) {
+        if (typeof sessionStorage !== "undefined") {
+          sessionStorage.setItem("careersetu_pending_student_email", email.toLowerCase());
+          sessionStorage.setItem("careersetu_pending_student_masked", res.maskedEmail || "");
         }
-        toast.error(error.message);
-        setLoading(false);
-        return;
-      }
-
-      if (data?.session) {
-        const studentUser: AppUser = {
-          id: data.session.user.id,
-          email: data.session.user.email || email,
-          full_name: data.session.user.user_metadata?.full_name || "Student",
-          role: "STUDENT",
-          status: "ACTIVE",
-          registeredAt: new Date().toISOString(),
-          lastActive: new Date().toISOString(),
-        };
-        setCurrentUser(studentUser);
-        toast.success("Welcome back!");
-        navigate({ to: "/dashboard" });
+        toast.success(res.isDev ? "Dev Mode: Verification code generated!" : "Verification code sent to your email.");
+        navigate({ to: "/student/verify-mfa" as any });
+      } else {
+        toast.error(res.error || "Authentication failed. Please check your credentials.");
       }
     } catch {
-      handleDemoLogin();
+      toast.error("An error occurred during authentication.");
     } finally {
       setLoading(false);
     }
@@ -183,52 +150,33 @@ function AuthPage() {
 
     const { email, password, ...meta } = parsed.data;
 
-    // Store signup data in local storage with strict STUDENT role
-    const tempProfile: AppUser = {
-      id: "user-" + Date.now(),
-      email,
-      full_name: meta.full_name,
-      role: "STUDENT", // Guaranteed default role
-      phone: meta.phone,
-      age: String(meta.age),
-      gender: meta.gender,
-      state: meta.state,
-      city: meta.city,
-      current_education: meta.current_education,
-      preferred_language: meta.preferred_language,
-      status: "ACTIVE",
-      registeredAt: new Date().toISOString(),
-      lastActive: new Date().toISOString(),
-    };
-    setCurrentUser(tempProfile);
-
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const res = await registerStudentUser({
         email,
         password,
-        options: {
-          emailRedirectTo: window.location.origin + "/dashboard",
-          data: { ...meta, age: String(meta.age) },
-        },
+        name: meta.full_name,
+        full_name: meta.full_name,
+        phone: meta.phone,
+        age: String(meta.age),
+        gender: meta.gender,
+        state: meta.state,
+        city: meta.city,
+        education: meta.current_education,
+        current_education: meta.current_education,
+        preferred_language: meta.preferred_language,
       });
 
-      setLoading(false);
-      if (error) {
-        toast.info("Account created! Redirecting to your dashboard...");
-        navigate({ to: "/dashboard" });
-        return;
+      if (res.success && res.user) {
+        if (typeof sessionStorage !== "undefined") {
+          sessionStorage.setItem("careersetu_pending_student_email", email.toLowerCase());
+        }
+        toast.success(`Account registered! Verification code sent to ${email}.`);
+        navigate({ to: "/student/verify-mfa" as any });
+      } else {
+        toast.error(res.error || "Could not complete registration.");
       }
-
-      if (!data.session) {
-        setEmailSent(true);
-        return;
-      }
-
-      toast.success("Account created successfully!");
-      navigate({ to: "/dashboard" });
     } catch {
-      toast.success("Account created!");
-      navigate({ to: "/dashboard" });
+      toast.error("Failed to complete registration.");
     } finally {
       setLoading(false);
     }

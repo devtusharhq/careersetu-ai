@@ -28,8 +28,14 @@ import { Route as AuthenticatedScholarshipsRouteImport } from './routes/_authent
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSkillGapRouteImport } from './routes/_authenticated/skill-gap'
 import { Route as AuthenticatedStudyPlannerRouteImport } from './routes/_authenticated/study-planner'
+import { Route as AdminFirstSetupRouteImport } from './routes/admin.first-setup'
+import { Route as AdminForgotPasswordRouteImport } from './routes/admin.forgot-password'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
+import { Route as AdminVerifyMfaRouteImport } from './routes/admin.verify-mfa'
 import { Route as StudentLoginRouteImport } from './routes/student.login'
+import { Route as StudentSignupRouteImport } from './routes/student.signup'
+import { Route as StudentVerifyMfaRouteImport } from './routes/student.verify-mfa'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin.dashboard'
 import { Route as AuthenticatedStudentDashboardRouteImport } from './routes/_authenticated/student.dashboard'
 
@@ -130,14 +136,44 @@ const AuthenticatedStudyPlannerRoute =
     path: '/study-planner',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AdminFirstSetupRoute = AdminFirstSetupRouteImport.update({
+  id: '/admin/first-setup',
+  path: '/admin/first-setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminForgotPasswordRoute = AdminForgotPasswordRouteImport.update({
+  id: '/admin/forgot-password',
+  path: '/admin/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
+  id: '/admin/reset-password',
+  path: '/admin/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminVerifyMfaRoute = AdminVerifyMfaRouteImport.update({
+  id: '/admin/verify-mfa',
+  path: '/admin/verify-mfa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudentLoginRoute = StudentLoginRouteImport.update({
   id: '/student/login',
   path: '/student/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentSignupRoute = StudentSignupRouteImport.update({
+  id: '/student/signup',
+  path: '/student/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentVerifyMfaRoute = StudentVerifyMfaRouteImport.update({
+  id: '/student/verify-mfa',
+  path: '/student/verify-mfa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminDashboardRoute =
@@ -172,8 +208,14 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/skill-gap': typeof AuthenticatedSkillGapRoute
   '/study-planner': typeof AuthenticatedStudyPlannerRoute
+  '/admin/first-setup': typeof AdminFirstSetupRoute
+  '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/verify-mfa': typeof AdminVerifyMfaRoute
   '/student/login': typeof StudentLoginRoute
+  '/student/signup': typeof StudentSignupRoute
+  '/student/verify-mfa': typeof StudentVerifyMfaRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/student/dashboard': typeof AuthenticatedStudentDashboardRoute
 }
@@ -196,8 +238,14 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/skill-gap': typeof AuthenticatedSkillGapRoute
   '/study-planner': typeof AuthenticatedStudyPlannerRoute
+  '/admin/first-setup': typeof AdminFirstSetupRoute
+  '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/verify-mfa': typeof AdminVerifyMfaRoute
   '/student/login': typeof StudentLoginRoute
+  '/student/signup': typeof StudentSignupRoute
+  '/student/verify-mfa': typeof StudentVerifyMfaRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/student/dashboard': typeof AuthenticatedStudentDashboardRoute
 }
@@ -222,8 +270,14 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/skill-gap': typeof AuthenticatedSkillGapRoute
   '/_authenticated/study-planner': typeof AuthenticatedStudyPlannerRoute
+  '/admin/first-setup': typeof AdminFirstSetupRoute
+  '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/verify-mfa': typeof AdminVerifyMfaRoute
   '/student/login': typeof StudentLoginRoute
+  '/student/signup': typeof StudentSignupRoute
+  '/student/verify-mfa': typeof StudentVerifyMfaRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/student/dashboard': typeof AuthenticatedStudentDashboardRoute
 }
@@ -248,8 +302,14 @@ export interface FileRouteTypes {
     | '/settings'
     | '/skill-gap'
     | '/study-planner'
+    | '/admin/first-setup'
+    | '/admin/forgot-password'
     | '/admin/login'
+    | '/admin/reset-password'
+    | '/admin/verify-mfa'
     | '/student/login'
+    | '/student/signup'
+    | '/student/verify-mfa'
     | '/admin/dashboard'
     | '/student/dashboard'
   fileRoutesByTo: FileRoutesByTo
@@ -272,8 +332,14 @@ export interface FileRouteTypes {
     | '/settings'
     | '/skill-gap'
     | '/study-planner'
+    | '/admin/first-setup'
+    | '/admin/forgot-password'
     | '/admin/login'
+    | '/admin/reset-password'
+    | '/admin/verify-mfa'
     | '/student/login'
+    | '/student/signup'
+    | '/student/verify-mfa'
     | '/admin/dashboard'
     | '/student/dashboard'
   id:
@@ -297,8 +363,14 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/skill-gap'
     | '/_authenticated/study-planner'
+    | '/admin/first-setup'
+    | '/admin/forgot-password'
     | '/admin/login'
+    | '/admin/reset-password'
+    | '/admin/verify-mfa'
     | '/student/login'
+    | '/student/signup'
+    | '/student/verify-mfa'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/student/dashboard'
   fileRoutesById: FileRoutesById
@@ -307,8 +379,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  AdminFirstSetupRoute: typeof AdminFirstSetupRoute
+  AdminForgotPasswordRoute: typeof AdminForgotPasswordRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminResetPasswordRoute: typeof AdminResetPasswordRoute
+  AdminVerifyMfaRoute: typeof AdminVerifyMfaRoute
   StudentLoginRoute: typeof StudentLoginRoute
+  StudentSignupRoute: typeof StudentSignupRoute
+  StudentVerifyMfaRoute: typeof StudentVerifyMfaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -446,6 +524,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudyPlannerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/admin/first-setup': {
+      id: '/admin/first-setup'
+      path: '/admin/first-setup'
+      fullPath: '/admin/first-setup'
+      preLoaderRoute: typeof AdminFirstSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/forgot-password': {
+      id: '/admin/forgot-password'
+      path: '/admin/forgot-password'
+      fullPath: '/admin/forgot-password'
+      preLoaderRoute: typeof AdminForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/admin/login'
@@ -453,11 +545,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/reset-password': {
+      id: '/admin/reset-password'
+      path: '/admin/reset-password'
+      fullPath: '/admin/reset-password'
+      preLoaderRoute: typeof AdminResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/verify-mfa': {
+      id: '/admin/verify-mfa'
+      path: '/admin/verify-mfa'
+      fullPath: '/admin/verify-mfa'
+      preLoaderRoute: typeof AdminVerifyMfaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/student/login': {
       id: '/student/login'
       path: '/student/login'
       fullPath: '/student/login'
       preLoaderRoute: typeof StudentLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/signup': {
+      id: '/student/signup'
+      path: '/student/signup'
+      fullPath: '/student/signup'
+      preLoaderRoute: typeof StudentSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/verify-mfa': {
+      id: '/student/verify-mfa'
+      path: '/student/verify-mfa'
+      fullPath: '/student/verify-mfa'
+      preLoaderRoute: typeof StudentVerifyMfaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/dashboard': {
@@ -535,8 +655,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  AdminFirstSetupRoute: AdminFirstSetupRoute,
+  AdminForgotPasswordRoute: AdminForgotPasswordRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminResetPasswordRoute: AdminResetPasswordRoute,
+  AdminVerifyMfaRoute: AdminVerifyMfaRoute,
   StudentLoginRoute: StudentLoginRoute,
+  StudentSignupRoute: StudentSignupRoute,
+  StudentVerifyMfaRoute: StudentVerifyMfaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

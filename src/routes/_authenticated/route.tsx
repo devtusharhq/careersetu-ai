@@ -54,7 +54,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { Language, getTranslation } from "@/lib/i18n/translations";
-import { getCurrentUser, isAdmin, AppUser } from "@/lib/auth/rbac";
+import { getCurrentUser, isAdmin, AppUser, logoutUser } from "@/lib/auth/rbac";
 import { getBroadcastNotifications } from "@/lib/store/admin-content-store";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -100,12 +100,10 @@ function AuthenticatedLayout() {
   async function signOut() {
     await queryClient.cancelQueries();
     queryClient.clear();
-    if (typeof localStorage !== "undefined") {
-      localStorage.removeItem("careersetu_demo_user");
-    }
+    logoutUser();
     await supabase.auth.signOut();
     toast.success("Signed out successfully");
-    navigate({ to: "/auth", search: { mode: "login" }, replace: true });
+    navigate({ to: "/student/login" as any, replace: true });
   }
 
   const currentPath = location.pathname;
