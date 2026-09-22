@@ -14,11 +14,21 @@ This directory contains the complete, publication-grade academic and engineering
 
 ---
 
-## Author & Project Metadata
+## 👥 Project Team & Academic Credentials
 
-- **Project Name:** CareerSetu AI
-- **Lead UI/UX Designer & Frontend UI Engineer:** **Tushar Devendra**
+| Role | Name | SAP ID | Contribution Area |
+| :--- | :--- | :---: | :--- |
+| 👨‍💻 **Project Developer** | **Tushar Devendra** | `53013240081` | Lead Full-Stack Platform Architecture, UI/UX Design System, PBKDF2/MFA Auth, SSR & Vercel Deployment |
+| 👑 **Project Owner** | **Nisha Sarvaiya** | `53013240082` | Product Strategy, Stakeholder Governance, Curriculum Alignment & Feature Prioritization |
+| 🧪 **Tester** | **Nishith Vore** | `53013240080` | QA Lead, 65 Manual Test Scenarios, Automated UI Regression Suites & Multi-Device Testing |
+| 📑 **Documentation** | **Raivat Shah** | `53013240078` | SPM Academic Documentation Suite Author, SRS Specifications & Jira Milestone Tracing |
+
+---
+
+## 🏛️ Project Technical Metadata
+
+- **Project Title:** CareerSetu AI — AI Career & Government Exam Guidance Platform
 - **Academic Subject:** Software Project Management (SPM) Capstone
 - **Hosting & Deployment:** **Vercel Serverless Edge Platform**
-- **Database & Realtime:** Supabase Cloud (PostgreSQL)
-- **Frontend Stack:** React 19, TypeScript 5.8, Tailwind CSS v4, TanStack Start / Router
+- **Database & Persistence:** Supabase Cloud (PostgreSQL with RLS)
+- **Frontend Core:** React 19, TypeScript 5.8, Tailwind CSS v4, TanStack Start / Router

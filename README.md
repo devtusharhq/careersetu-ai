@@ -1,3 +1,7 @@
+<div align="center">
+
+<img src="./docs/careersetu-logo.png" alt="CareerSetu AI Logo" width="320" />
+
 # 🎓 CareerSetu AI — AI-Powered Career & Government Exam Guidance Platform
 
 [![React 19](https://img.shields.io/badge/React-19.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
@@ -11,18 +15,20 @@
 [![SUS Score](https://img.shields.io/badge/SUS_Usability-88.5%20(Grade%20A%2B)-brightgreen?style=for-the-badge)](#-empirical-usability-metrics)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
+</div>
+
 > **CareerSetu AI** is a comprehensive, production-grade educational technology and psychometric guidance ecosystem designed to bridge India's 250M+ student career counseling divide. Empowering students across **Class 10, Class 12, Diploma, Graduation, and Post Graduation** through AI-driven RIASEC assessments, real-time government exam trackers, dynamic study planning, ATS resume evaluation, and curated college and scholarship intelligence.
 
 ---
 
 ## 👥 Project Leadership & Team Attribution
 
-| Role | Name | Responsibilities & Contribution Scope |
-| :--- | :--- | :--- |
-| 👨‍💻 **Project Developer** | **Tushar Devendra** | Full-Stack Platform Architecture, TanStack SSR/Router Integration, PBKDF2 Crypto & MFA Auth Subsystems, UI/UX Design System (OKLCH Tokens & Atomic UI), and Deployment Automation |
-| 👑 **Project Owner** | **Nisha Sarvaiya** | Product Vision & Strategy, Student Stakeholder Engagement, Academic Curriculum Alignment, Feature Prioritization, and Milestone Governance |
-| 🧪 **Tester** | **Nishith Vore** | QA Lead, Test Case Design (65 End-to-End Manual Test Scenarios), Automated UI Regression Suites, Cross-Browser / Multi-Device Responsiveness, and Vulnerability Assessment |
-| 📑 **Documentation** | **Raivat Shah** | Academic & Technical Documentation Suite Author, SRS & Mathematical Formulations, Software Project Management (SPM) Alignment, User Manuals, and Jira Epics Tracing |
+| Role | Name | SAP ID | Responsibilities & Contribution Scope |
+| :--- | :--- | :---: | :--- |
+| 👨‍💻 **Project Developer** | **Tushar Devendra** | `53013240081` | Full-Stack Platform Architecture, TanStack SSR/Router Integration, PBKDF2 Crypto & MFA Auth Subsystems, UI/UX Design System (OKLCH Tokens & Atomic UI), and Deployment Automation |
+| 👑 **Project Owner** | **Nisha Sarvaiya** | `53013240082` | Product Vision & Strategy, Student Stakeholder Engagement, Academic Curriculum Alignment, Feature Prioritization, and Milestone Governance |
+| 🧪 **Tester** | **Nishith Vore** | `53013240080` | QA Lead, Test Case Design (65 End-to-End Manual Test Scenarios), Automated UI Regression Suites, Cross-Browser / Multi-Device Responsiveness, and Vulnerability Assessment |
+| 📑 **Documentation** | **Raivat Shah** | `53013240078` | Academic & Technical Documentation Suite Author, SRS & Mathematical Formulations, Software Project Management (SPM) Alignment, User Manuals, and Jira Epics Tracing |
 
 ---
 
@@ -408,7 +414,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 **Built with ❤️ for Indian Students by the CareerSetu AI Team**
 
-<sub>Project Developer: **Tushar Devendra** • Project Owner: **Nisha Sarvaiya** • Tester: **Nishith Vore** • Documentation: **Raivat Shah**</sub>
+<sub>Project Developer: **Tushar Devendra** (`53013240081`) • Project Owner: **Nisha Sarvaiya** (`53013240082`) • Tester: **Nishith Vore** (`53013240080`) • Documentation: **Raivat Shah** (`53013240078`)</sub>
 
 <br/>
 
