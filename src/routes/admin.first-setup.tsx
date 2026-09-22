@@ -33,14 +33,10 @@ function AdminFirstSetupPage() {
     let stored = "";
     if (typeof sessionStorage !== "undefined") {
       stored = sessionStorage.getItem("careersetu_pending_admin_email") || "";
-      const devRecord = sessionStorage.getItem("careersetu_latest_dev_email");
-      if (devRecord) {
-        try {
-          const parsed = JSON.parse(devRecord);
-          if (parsed.otpCode) {
-            setDevOtp(parsed.otpCode);
-          }
-        } catch {}
+      // Read dev OTP from the unified key set by admin.login.tsx
+      const devOtpStored = sessionStorage.getItem("careersetu_dev_otp");
+      if (devOtpStored) {
+        setDevOtp(devOtpStored);
       }
     }
     if (!stored) stored = "tysonfire13@gmail.com";
@@ -102,76 +98,71 @@ function AdminFirstSetupPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-slate-950 text-slate-100 flex flex-col justify-between p-4 sm:p-8 antialiased selection:bg-amber-500/20">
-      <div className="mx-auto w-full max-w-md pt-6 pb-8">
-        <Link to="/" className="mb-6 flex justify-center items-center gap-2" aria-label="CareerSetu home">
+    <div className="min-h-dvh bg-background text-foreground relative overflow-hidden flex flex-col justify-between p-4 sm:p-8 antialiased">
+      {/* Ambient background decoration */}
+      <div className="gradient-soft absolute inset-0 -z-10 opacity-70" />
+      <div className="blueprint-grid absolute inset-0 -z-10 opacity-40" />
+      <div className="absolute -top-32 left-1/2 -translate-x-1/2 -z-10 size-[32rem] rounded-full bg-amber-500/10 blur-[120px] pointer-events-none" />
+
+      {/* Top Header */}
+      <div className="mx-auto w-full max-w-md flex items-center justify-between pt-2">
+        <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity" aria-label="CareerSetu home">
           <Logo />
         </Link>
+      </div>
 
+      <div className="mx-auto w-full max-w-md py-6">
         {/* Security Alert Header */}
-        <div className="mb-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 p-3.5 flex items-start gap-3 text-xs text-amber-300">
-          <Sparkles className="size-5 text-amber-400 shrink-0 mt-0.5" />
+        <div className="mb-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 p-3.5 flex items-start gap-3 text-xs text-amber-600 dark:text-amber-300">
+          <Sparkles className="size-5 text-amber-500 shrink-0 mt-0.5" />
           <div>
-            <p className="font-bold text-amber-200">First-Time Administrator Setup</p>
-            <p className="mt-0.5 text-amber-300/80 leading-relaxed text-[11px]">
+            <p className="font-bold">First-Time Administrator Setup</p>
+            <p className="mt-0.5 text-muted-foreground leading-relaxed text-[11px]">
               Set up your personal administrator password. No permanent hardcoded password is used.
             </p>
           </div>
         </div>
 
-        <Card className="rounded-3xl p-6 sm:p-8 bg-slate-900/90 border-slate-800 shadow-2xl backdrop-blur-xl">
+        <Card className="rounded-3xl p-6 sm:p-8 bg-card/85 border border-border/80 shadow-elegant backdrop-blur-xl">
           <div className="space-y-5">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-4 border-b border-border/70">
               <div className="flex items-center gap-3">
-                <span className="grid size-10 place-items-center rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                <span className="grid size-10 place-items-center rounded-2xl bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">
                   <KeyRound className="size-5" />
                 </span>
                 <div>
-                  <h1 className="text-lg font-bold font-display text-white">Create Admin Password</h1>
-                  <p className="text-xs text-slate-400">Account: {email}</p>
+                  <h1 className="text-lg font-bold font-display text-foreground">Create Admin Password</h1>
+                  <p className="text-xs text-muted-foreground">Account: {email}</p>
                 </div>
               </div>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate({ to: "/admin/login" as any })}
-                className="h-8 px-2 text-xs text-slate-400 hover:text-white"
+                className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground rounded-xl"
               >
                 <ArrowLeft className="size-3.5 mr-1" /> Back
               </Button>
             </div>
 
-            {/* Dev Mode Simulation */}
-            {devOtp && (
-              <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-amber-300/80 block uppercase font-bold tracking-wider">
-                    Dev Setup Security Code:
-                  </span>
-                  <span className="text-base font-mono font-bold tracking-widest text-amber-300">{devOtp}</span>
-                </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => {
-                    setSecurityCode(devOtp);
-                    toast.success("Security code auto-filled!");
-                  }}
-                  className="h-7 px-2.5 text-[11px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg cursor-pointer"
-                >
-                  Auto-fill Code
-                </Button>
-              </div>
-            )}
+            {/* Security Dispatch Notice */}
+            <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 space-y-1.5 text-xs">
+              <p className="text-muted-foreground leading-relaxed">
+                A one-time setup code was generated on the backend and dispatched to your administrator email:
+              </p>
+              <p className="font-mono font-bold text-amber-600 dark:text-amber-400 text-sm tracking-wide">
+                {maskEmail(email)}
+              </p>
+            </div>
 
             <form onSubmit={handleSetup} className="space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <Label className="text-xs text-slate-300 font-semibold">6-Digit Authorization Code</Label>
+                  <Label className="text-xs text-foreground font-semibold">6-Digit Authorization Code</Label>
                   <button
                     type="button"
                     onClick={handleResend}
-                    className="text-[11px] text-amber-400 hover:underline"
+                    className="text-[11px] text-amber-600 dark:text-amber-400 hover:underline cursor-pointer"
                   >
                     Resend Code
                   </button>
@@ -183,51 +174,51 @@ function AdminFirstSetupPage() {
                   value={securityCode}
                   onChange={(e) => setSecurityCode(e.target.value.replace(/[^0-9]/g, ""))}
                   placeholder="• • • • • •"
-                  className="bg-slate-950 border-slate-700 text-white rounded-xl h-11 text-center text-lg tracking-[0.4em] font-mono focus-visible:ring-amber-500 font-bold"
+                  className="rounded-xl h-11 text-center text-lg tracking-[0.4em] font-mono font-bold"
                 />
               </div>
 
               <div>
-                <Label className="text-xs text-slate-300 font-semibold mb-1.5 block">New Administrator Password</Label>
+                <Label className="text-xs text-foreground font-semibold mb-1.5 block">New Administrator Password</Label>
                 <Input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="bg-slate-950/80 border-slate-700 text-white rounded-xl h-10 text-xs focus-visible:ring-amber-500"
+                  className="rounded-xl h-10 text-xs"
                 />
               </div>
 
               <div>
-                <Label className="text-xs text-slate-300 font-semibold mb-1.5 block">Confirm Administrator Password</Label>
+                <Label className="text-xs text-foreground font-semibold mb-1.5 block">Confirm Administrator Password</Label>
                 <Input
                   type="password"
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="bg-slate-950/80 border-slate-700 text-white rounded-xl h-10 text-xs focus-visible:ring-amber-500"
+                  className="rounded-xl h-10 text-xs"
                 />
               </div>
 
               {/* Password Strength Meter */}
               {password && (
-                <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs space-y-1.5">
+                <div className="p-3 rounded-xl bg-accent/40 border border-border/80 text-xs space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400 text-[11px]">Password Security:</span>
-                    <span className={`text-[11px] font-bold ${passwordStrength.isValid ? "text-emerald-400" : "text-amber-400"}`}>
+                    <span className="text-muted-foreground text-[11px]">Password Security:</span>
+                    <span className={`text-[11px] font-bold ${passwordStrength.isValid ? "text-emerald-500" : "text-amber-500"}`}>
                       {passwordStrength.isValid ? "Strong Password" : "Requirements Pending"}
                     </span>
                   </div>
-                  <div className="grid grid-cols-4 gap-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="grid grid-cols-4 gap-1 h-1.5 bg-muted rounded-full overflow-hidden">
                     <div className={`h-full ${passwordStrength.score >= 1 ? "bg-red-500" : "bg-transparent"}`} />
                     <div className={`h-full ${passwordStrength.score >= 2 ? "bg-amber-500" : "bg-transparent"}`} />
                     <div className={`h-full ${passwordStrength.score >= 3 ? "bg-blue-500" : "bg-transparent"}`} />
                     <div className={`h-full ${passwordStrength.score >= 4 ? "bg-emerald-500" : "bg-transparent"}`} />
                   </div>
                   {!passwordStrength.isValid && passwordStrength.feedback.length > 0 && (
-                    <p className="text-[10px] text-slate-400 leading-tight">
+                    <p className="text-[10px] text-muted-foreground leading-tight">
                       {passwordStrength.feedback[0]}
                     </p>
                   )}
@@ -238,7 +229,7 @@ function AdminFirstSetupPage() {
                 <Button
                   type="submit"
                   disabled={loading || !passwordStrength.isValid || securityCode.length !== 6}
-                  className="w-full h-11 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs shadow-lg shadow-amber-500/20 cursor-pointer disabled:opacity-50"
+                  className="w-full h-11 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md shadow-amber-600/20 cursor-pointer disabled:opacity-50 transition-all"
                 >
                   {loading ? (
                     <>
@@ -258,7 +249,7 @@ function AdminFirstSetupPage() {
         </Card>
       </div>
 
-      <footer className="text-center text-[11px] text-slate-500 py-4">
+      <footer className="text-center text-[11px] text-muted-foreground py-3">
         CareerSetu AI Platform Security System • Multi-Factor Authentication & RBAC Tier 1
       </footer>
     </div>

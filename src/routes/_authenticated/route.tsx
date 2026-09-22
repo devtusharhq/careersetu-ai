@@ -172,6 +172,23 @@ function AuthenticatedLayout() {
               <Sparkles className="size-3 text-amber-500 fill-amber-500" />
             </Button>
 
+            {/* Theme Toggler */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl text-muted-foreground hover:text-foreground cursor-pointer"
+              aria-label="Toggle Theme"
+              onClick={() => {
+                const isDark = document.documentElement.classList.toggle("dark");
+                if (typeof localStorage !== "undefined") {
+                  localStorage.setItem("careersetu_theme", isDark ? "dark" : "light");
+                }
+              }}
+            >
+              <Sun className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-amber-500" />
+              <Moon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-sky-400" />
+            </Button>
+
             {/* Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

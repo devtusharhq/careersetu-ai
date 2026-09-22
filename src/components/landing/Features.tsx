@@ -81,23 +81,34 @@ const categories = [
 
 export function Features() {
   return (
-    <section id="features" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+    <section id="features" className="mx-auto max-w-6xl px-4 py-16 sm:py-20 sm:px-6">
       <div className="mx-auto max-w-2xl text-center">
-        <p className="text-sm font-semibold tracking-widest text-primary uppercase">Everything inside</p>
-        <h2 className="mt-3 text-3xl font-bold sm:text-4xl">One platform for your entire journey</h2>
-        <p className="mt-4 text-muted-foreground">
-          From choosing a stream after Class 10 to cracking a government exam after graduation.
+        <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1 text-xs font-semibold text-primary mb-3 backdrop-blur-xs">
+          Comprehensive Toolset
+        </div>
+        <h2 className="text-3xl font-extrabold sm:text-4xl text-foreground tracking-tight">One platform for your entire journey</h2>
+        <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+          From choosing the right stream after Class 10 to cracking premier competitive exams and building an ATS-ready resume.
         </p>
       </div>
 
       <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {features.map((f) => (
-          <Card key={f.title} className="hover-lift glass arch-accent overflow-hidden rounded-[1.25rem] p-6">
-            <span className="gradient-brand grid size-11 place-items-center rounded-xl text-primary-foreground shadow-glow">
-              <f.icon className="size-5" />
-            </span>
-            <h3 className="mt-4 text-lg font-semibold">{f.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
+          <Card
+            key={f.title}
+            className="hover-lift glass arch-accent overflow-hidden rounded-3xl p-6 border-border/80 hover:border-primary/40 group transition-all shadow-soft hover:shadow-elegant flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-start justify-between">
+                <span className="gradient-brand grid size-12 place-items-center rounded-2xl text-primary-foreground shadow-glow group-hover:scale-105 transition-transform">
+                  <f.icon className="size-5" />
+                </span>
+              </div>
+              <h3 className="mt-5 text-base sm:text-lg font-bold text-foreground group-hover:text-primary transition-colors tracking-tight">
+                {f.title}
+              </h3>
+              <p className="mt-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
+            </div>
           </Card>
         ))}
       </div>
@@ -108,11 +119,17 @@ export function Features() {
 export function Stats() {
   return (
     <section className="mx-auto max-w-6xl px-4 sm:px-6">
-      <div className="gradient-brand shadow-elegant grid gap-8 rounded-3xl px-6 py-10 sm:grid-cols-2 sm:px-10 lg:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.label} className="text-center text-primary-foreground">
-            <p className="font-display text-4xl font-extrabold">{s.value}</p>
-            <p className="mt-1 text-sm opacity-85">{s.label}</p>
+      <div className="gradient-brand shadow-elegant grain grid gap-4 sm:gap-6 rounded-3xl p-6 sm:p-10 grid-cols-2 lg:grid-cols-4 text-primary-foreground relative overflow-hidden">
+        <div className="absolute inset-0 bg-white/5 backdrop-blur-[1px] pointer-events-none" />
+        {stats.map((s, index) => (
+          <div
+            key={s.label}
+            className={`text-center relative z-10 p-3 sm:p-4 ${
+              index !== 0 ? "lg:border-l lg:border-white/20" : ""
+            }`}
+          >
+            <p className="font-display text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs">{s.value}</p>
+            <p className="mt-2 text-xs sm:text-sm font-semibold tracking-wide text-white/90">{s.label}</p>
           </div>
         ))}
       </div>
@@ -122,23 +139,33 @@ export function Stats() {
 
 export function Categories() {
   return (
-    <section id="careers" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+    <section id="careers" className="mx-auto max-w-6xl px-4 py-16 sm:py-20 sm:px-6">
       <div className="mx-auto max-w-2xl text-center">
-        <p className="text-sm font-semibold tracking-widest text-primary uppercase">Career categories</p>
-        <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Explore where you fit best</h2>
+        <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1 text-xs font-semibold text-primary mb-3 backdrop-blur-xs">
+          Domain Spectrum
+        </div>
+        <h2 className="text-3xl font-extrabold sm:text-4xl text-foreground tracking-tight">Explore 8 High-Growth Domains</h2>
+        <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+          Discover comprehensive career pathways, skill requirements, and compensation benchmarks tailored to India.
+        </p>
       </div>
 
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {categories.map((c) => (
           <Card
             key={c.name}
-            className="hover-lift rounded-2xl border-border/70 bg-card p-5 shadow-soft"
+            className="hover-lift rounded-3xl border-border/75 bg-card/85 p-5 shadow-soft hover:border-primary/45 transition-all cursor-default group"
           >
-            <span className="grid size-10 place-items-center rounded-xl bg-accent text-accent-foreground">
-              <c.icon className="size-5" />
-            </span>
-            <h3 className="mt-4 font-semibold">{c.name}</h3>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{c.roles}</p>
+            <div className="flex items-center justify-between">
+              <span className="grid size-11 place-items-center rounded-2xl bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <c.icon className="size-5" />
+              </span>
+              <span className="text-[11px] font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                Explore →
+              </span>
+            </div>
+            <h3 className="mt-4 font-bold text-base text-foreground group-hover:text-primary transition-colors">{c.name}</h3>
+            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{c.roles}</p>
           </Card>
         ))}
       </div>

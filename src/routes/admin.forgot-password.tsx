@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { initiateAdminForgotPassword, completeAdminPasswordReset } from "@/lib/auth/rbac";
-import { evaluatePasswordStrength } from "@/lib/auth/crypto";
+import { evaluatePasswordStrength, maskEmail } from "@/lib/auth/crypto";
 
 export const Route = createFileRoute("/admin/forgot-password")({
   head: () => ({
@@ -48,15 +48,11 @@ function AdminForgotPasswordPage() {
       const result = await initiateAdminForgotPassword(email);
       setMaskedEmail(result.maskedEmail || email);
 
-      if (result.isDev && typeof sessionStorage !== "undefined") {
-        const devRecord = sessionStorage.getItem("careersetu_latest_dev_email");
-        if (devRecord) {
-          try {
-            const parsed = JSON.parse(devRecord);
-            if (parsed.otpCode) {
-              setDevOtp(parsed.otpCode);
-            }
-          } catch {}
+      // In dev mode (no SMTP), capture the OTP so the user can enter it
+      if (result.devOtp) {
+        setDevOtp(result.devOtp);
+        if (typeof sessionStorage !== "undefined") {
+          sessionStorage.setItem("careersetu_dev_otp", result.devOtp);
         }
       }
 
@@ -107,42 +103,50 @@ function AdminForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-slate-950 text-slate-100 flex flex-col justify-between p-4 sm:p-8 antialiased selection:bg-amber-500/20">
-      <div className="mx-auto w-full max-w-md pt-8">
-        <Link to="/" className="mb-6 flex justify-center items-center gap-2" aria-label="CareerSetu home">
+    <div className="min-h-dvh bg-background text-foreground relative overflow-hidden flex flex-col justify-between p-4 sm:p-8 antialiased">
+      {/* Ambient background decoration */}
+      <div className="gradient-soft absolute inset-0 -z-10 opacity-70" />
+      <div className="blueprint-grid absolute inset-0 -z-10 opacity-40" />
+      <div className="absolute -top-32 left-1/2 -translate-x-1/2 -z-10 size-[32rem] rounded-full bg-amber-500/10 blur-[120px] pointer-events-none" />
+
+      {/* Top Header */}
+      <div className="mx-auto w-full max-w-md flex items-center justify-between pt-2">
+        <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity" aria-label="CareerSetu home">
           <Logo />
         </Link>
+      </div>
 
+      <div className="mx-auto w-full max-w-md py-6">
         {/* Security Header Alert */}
-        <div className="mb-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 p-3.5 flex items-start gap-3 text-xs text-amber-300">
-          <ShieldAlert className="size-5 text-amber-400 shrink-0 mt-0.5" />
+        <div className="mb-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 p-3.5 flex items-start gap-3 text-xs text-amber-600 dark:text-amber-300 backdrop-blur-md">
+          <ShieldAlert className="size-5 text-amber-500 shrink-0 mt-0.5" />
           <div>
-            <p className="font-bold text-amber-200">Administrator Password Recovery</p>
-            <p className="mt-0.5 text-amber-300/80 leading-relaxed text-[11px]">
+            <p className="font-bold">Administrator Password Recovery</p>
+            <p className="mt-0.5 text-muted-foreground leading-relaxed text-[11px]">
               Requires single-use security code dispatched to your registered security email.
             </p>
           </div>
         </div>
 
-        <Card className="rounded-3xl p-6 sm:p-8 bg-slate-900/90 border-slate-800 shadow-2xl backdrop-blur-xl">
+        <Card className="rounded-3xl p-6 sm:p-8 bg-card/85 border border-border/80 shadow-elegant backdrop-blur-xl">
           {/* STEP 1: Request Code */}
           {step === "REQUEST_CODE" && (
             <div className="space-y-5">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+              <div className="flex items-center justify-between pb-4 border-b border-border/70">
                 <div className="flex items-center gap-3">
-                  <span className="grid size-10 place-items-center rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                  <span className="grid size-10 place-items-center rounded-2xl bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">
                     <Mail className="size-5" />
                   </span>
                   <div>
-                    <h1 className="text-lg font-bold font-display text-white">Forgot Password</h1>
-                    <p className="text-xs text-slate-400">Step 1: Enter registered admin email</p>
+                    <h1 className="text-lg font-bold font-display text-foreground">Forgot Password</h1>
+                    <p className="text-xs text-muted-foreground">Step 1: Enter registered admin email</p>
                   </div>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => navigate({ to: "/admin/login" as any })}
-                  className="h-8 px-2 text-xs text-slate-400 hover:text-white"
+                  className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground rounded-xl"
                 >
                   <ArrowLeft className="size-3.5 mr-1" /> Back
                 </Button>
@@ -150,14 +154,14 @@ function AdminForgotPasswordPage() {
 
               <form onSubmit={handleRequestCode} className="space-y-4">
                 <div>
-                  <Label className="text-xs text-slate-300 font-semibold mb-1.5 block">Administrator Email</Label>
+                  <Label className="text-xs text-foreground font-semibold mb-1.5 block">Administrator Email</Label>
                   <Input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="tysonfire13@gmail.com"
-                    className="bg-slate-950/80 border-slate-700 text-white rounded-xl h-10 text-xs focus-visible:ring-amber-500 font-mono"
+                    placeholder="admin@careersetu.ai"
+                    className="rounded-xl h-10 text-xs font-mono"
                   />
                 </div>
 
@@ -165,7 +169,7 @@ function AdminForgotPasswordPage() {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-11 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs shadow-lg shadow-amber-500/20 cursor-pointer"
+                    className="w-full h-11 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md shadow-amber-600/20 cursor-pointer transition-all"
                   >
                     {loading ? (
                       <>
@@ -187,52 +191,61 @@ function AdminForgotPasswordPage() {
           {/* STEP 2: Verify Code & Enter New Password */}
           {step === "VERIFY_AND_RESET" && (
             <div className="space-y-5">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+              <div className="flex items-center justify-between pb-4 border-b border-border/70">
                 <div className="flex items-center gap-3">
-                  <span className="grid size-10 place-items-center rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                  <span className="grid size-10 place-items-center rounded-2xl bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">
                     <KeyRound className="size-5" />
                   </span>
                   <div>
-                    <h2 className="text-lg font-bold font-display text-white">Reset Password</h2>
-                    <p className="text-xs text-slate-400">Step 2: Enter code & new password</p>
+                    <h2 className="text-lg font-bold font-display text-foreground">Reset Password</h2>
+                    <p className="text-xs text-muted-foreground">Step 2: Enter code & new password</p>
                   </div>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setStep("REQUEST_CODE")}
-                  className="h-8 px-2 text-xs text-slate-400 hover:text-white"
+                  className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground rounded-xl"
                 >
                   <ArrowLeft className="size-3.5 mr-1" /> Back
                 </Button>
               </div>
 
-              {/* Dev Simulation Display */}
+              {/* Dev-mode OTP helper banner — only shown when SMTP is not configured */}
               {devOtp && (
-                <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-amber-300/80 block uppercase font-bold tracking-wider">
-                      Dev Reset Security Code:
-                    </span>
-                    <span className="text-base font-mono font-bold tracking-widest text-amber-300">{devOtp}</span>
+                <div className="rounded-2xl border border-amber-400/50 bg-amber-400/10 p-3.5 flex items-start gap-3">
+                  <span className="text-amber-400 text-lg leading-none mt-0.5">🔧</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-amber-300 mb-1">Dev Mode — No SMTP configured</p>
+                    <p
+                      className="font-mono text-2xl font-black tracking-[0.35em] text-amber-200 select-all cursor-pointer hover:text-amber-100 transition-colors"
+                      onClick={() => {
+                        setResetCode(devOtp);
+                        setDevOtp(null);
+                        if (typeof sessionStorage !== "undefined") sessionStorage.removeItem("careersetu_dev_otp");
+                      }}
+                      title="Click to auto-fill"
+                    >
+                      {devOtp}
+                    </p>
+                    <p className="text-[10px] text-amber-400/70 mt-1">Click the code to auto-fill. Hidden when real email delivery is active.</p>
                   </div>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => {
-                      setResetCode(devOtp);
-                      toast.success("Reset code auto-filled!");
-                    }}
-                    className="h-7 px-2.5 text-[11px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg cursor-pointer"
-                  >
-                    Auto-fill Code
-                  </Button>
                 </div>
               )}
 
+              {/* Security Dispatch Notice */}
+              <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 space-y-1.5 text-xs">
+                <p className="text-muted-foreground leading-relaxed">
+                  A 6-digit password reset security code was generated on the backend and sent to:
+                </p>
+                <p className="font-mono font-bold text-amber-600 dark:text-amber-400 text-sm tracking-wide">
+                  {maskEmail(email)}
+                </p>
+              </div>
+
               <form onSubmit={handleResetPassword} className="space-y-4">
                 <div>
-                  <Label className="text-xs text-slate-300 font-semibold mb-1.5 block">
+                  <Label className="text-xs text-foreground font-semibold mb-1.5 block">
                     6-Digit Password Reset Code
                   </Label>
                   <Input
@@ -242,44 +255,44 @@ function AdminForgotPasswordPage() {
                     value={resetCode}
                     onChange={(e) => setResetCode(e.target.value.replace(/[^0-9]/g, ""))}
                     placeholder="• • • • • •"
-                    className="bg-slate-950 border-slate-700 text-white rounded-xl h-11 text-center text-lg tracking-[0.4em] font-mono focus-visible:ring-amber-500 font-bold"
+                    className="rounded-xl h-11 text-center text-lg tracking-[0.4em] font-mono font-bold"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-xs text-slate-300 font-semibold mb-1.5 block">New Password</Label>
+                  <Label className="text-xs text-foreground font-semibold mb-1.5 block">New Password</Label>
                   <Input
                     type="password"
                     required
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="bg-slate-950/80 border-slate-700 text-white rounded-xl h-10 text-xs focus-visible:ring-amber-500"
+                    className="rounded-xl h-10 text-xs"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-xs text-slate-300 font-semibold mb-1.5 block">Confirm New Password</Label>
+                  <Label className="text-xs text-foreground font-semibold mb-1.5 block">Confirm New Password</Label>
                   <Input
                     type="password"
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="bg-slate-950/80 border-slate-700 text-white rounded-xl h-10 text-xs focus-visible:ring-amber-500"
+                    className="rounded-xl h-10 text-xs"
                   />
                 </div>
 
                 {/* Password Strength */}
                 {newPassword && (
-                  <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs space-y-1.5">
+                  <div className="p-3 rounded-xl bg-accent/40 border border-border/80 text-xs space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 text-[11px]">Strength:</span>
-                      <span className={`text-[11px] font-bold ${passwordStrength.isValid ? "text-emerald-400" : "text-amber-400"}`}>
+                      <span className="text-muted-foreground text-[11px]">Strength:</span>
+                      <span className={`text-[11px] font-bold ${passwordStrength.isValid ? "text-emerald-500" : "text-amber-500"}`}>
                         {passwordStrength.isValid ? "Strong Password" : "Criteria Pending"}
                       </span>
                     </div>
-                    <div className="grid grid-cols-4 gap-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="grid grid-cols-4 gap-1 h-1.5 bg-muted rounded-full overflow-hidden">
                       <div className={`h-full ${passwordStrength.score >= 1 ? "bg-red-500" : "bg-transparent"}`} />
                       <div className={`h-full ${passwordStrength.score >= 2 ? "bg-amber-500" : "bg-transparent"}`} />
                       <div className={`h-full ${passwordStrength.score >= 3 ? "bg-blue-500" : "bg-transparent"}`} />
@@ -292,7 +305,7 @@ function AdminForgotPasswordPage() {
                   <Button
                     type="submit"
                     disabled={loading || !passwordStrength.isValid || resetCode.length !== 6}
-                    className="w-full h-11 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs shadow-lg shadow-amber-500/20 cursor-pointer disabled:opacity-50"
+                    className="w-full h-11 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md shadow-amber-600/20 cursor-pointer disabled:opacity-50 transition-all"
                   >
                     {loading ? (
                       <>
@@ -314,18 +327,18 @@ function AdminForgotPasswordPage() {
           {/* STEP 3: Success */}
           {step === "SUCCESS" && (
             <div className="py-6 text-center space-y-4">
-              <div className="size-16 rounded-3xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto shadow-glow">
+              <div className="size-16 rounded-3xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto shadow-glow">
                 <CheckCircle2 className="size-8" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-lg font-bold text-white">Password Reset Successful</h3>
-                <p className="text-xs text-slate-400">
+                <h3 className="text-lg font-bold text-foreground">Password Reset Successful</h3>
+                <p className="text-xs text-muted-foreground">
                   Your administrator password has been updated and all previous sessions have been invalidated.
                 </p>
               </div>
               <Button
                 onClick={() => navigate({ to: "/admin/login" as any })}
-                className="w-full h-11 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs shadow-lg shadow-amber-500/20 cursor-pointer mt-4"
+                className="w-full h-11 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md shadow-amber-600/20 cursor-pointer mt-4"
               >
                 Proceed to Administrator Sign In
               </Button>
@@ -334,7 +347,7 @@ function AdminForgotPasswordPage() {
         </Card>
       </div>
 
-      <footer className="text-center text-[11px] text-slate-500 py-4">
+      <footer className="text-center text-[11px] text-muted-foreground py-3">
         CareerSetu AI Platform Security System • Multi-Factor Authentication & RBAC Tier 1
       </footer>
     </div>

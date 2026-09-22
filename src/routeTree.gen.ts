@@ -32,7 +32,9 @@ import { Route as AdminFirstSetupRouteImport } from './routes/admin.first-setup'
 import { Route as AdminForgotPasswordRouteImport } from './routes/admin.forgot-password'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
+import { Route as AdminSignupRouteImport } from './routes/admin.signup'
 import { Route as AdminVerifyMfaRouteImport } from './routes/admin.verify-mfa'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as StudentLoginRouteImport } from './routes/student.login'
 import { Route as StudentSignupRouteImport } from './routes/student.signup'
 import { Route as StudentVerifyMfaRouteImport } from './routes/student.verify-mfa'
@@ -156,10 +158,20 @@ const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
   path: '/admin/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSignupRoute = AdminSignupRouteImport.update({
+  id: '/admin/signup',
+  path: '/admin/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminVerifyMfaRoute = AdminVerifyMfaRouteImport.update({
   id: '/admin/verify-mfa',
   path: '/admin/verify-mfa',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
 } as any)
 const StudentLoginRoute = StudentLoginRouteImport.update({
   id: '/student/login',
@@ -191,7 +203,7 @@ const AuthenticatedStudentDashboardRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/assessment': typeof AuthenticatedAssessmentRoute
   '/assessment-results': typeof AuthenticatedAssessmentResultsRoute
@@ -212,7 +224,9 @@ export interface FileRoutesByFullPath {
   '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/signup': typeof AdminSignupRoute
   '/admin/verify-mfa': typeof AdminVerifyMfaRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/student/login': typeof StudentLoginRoute
   '/student/signup': typeof StudentSignupRoute
   '/student/verify-mfa': typeof StudentVerifyMfaRoute
@@ -221,7 +235,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/assessment': typeof AuthenticatedAssessmentRoute
   '/assessment-results': typeof AuthenticatedAssessmentResultsRoute
@@ -242,7 +256,9 @@ export interface FileRoutesByTo {
   '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/signup': typeof AdminSignupRoute
   '/admin/verify-mfa': typeof AdminVerifyMfaRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/student/login': typeof StudentLoginRoute
   '/student/signup': typeof StudentSignupRoute
   '/student/verify-mfa': typeof StudentVerifyMfaRoute
@@ -253,7 +269,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/assessment': typeof AuthenticatedAssessmentRoute
   '/_authenticated/assessment-results': typeof AuthenticatedAssessmentResultsRoute
@@ -274,7 +290,9 @@ export interface FileRoutesById {
   '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/signup': typeof AdminSignupRoute
   '/admin/verify-mfa': typeof AdminVerifyMfaRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/student/login': typeof StudentLoginRoute
   '/student/signup': typeof StudentSignupRoute
   '/student/verify-mfa': typeof StudentVerifyMfaRoute
@@ -306,7 +324,9 @@ export interface FileRouteTypes {
     | '/admin/forgot-password'
     | '/admin/login'
     | '/admin/reset-password'
+    | '/admin/signup'
     | '/admin/verify-mfa'
+    | '/auth/callback'
     | '/student/login'
     | '/student/signup'
     | '/student/verify-mfa'
@@ -336,7 +356,9 @@ export interface FileRouteTypes {
     | '/admin/forgot-password'
     | '/admin/login'
     | '/admin/reset-password'
+    | '/admin/signup'
     | '/admin/verify-mfa'
+    | '/auth/callback'
     | '/student/login'
     | '/student/signup'
     | '/student/verify-mfa'
@@ -367,7 +389,9 @@ export interface FileRouteTypes {
     | '/admin/forgot-password'
     | '/admin/login'
     | '/admin/reset-password'
+    | '/admin/signup'
     | '/admin/verify-mfa'
+    | '/auth/callback'
     | '/student/login'
     | '/student/signup'
     | '/student/verify-mfa'
@@ -378,11 +402,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   AdminFirstSetupRoute: typeof AdminFirstSetupRoute
   AdminForgotPasswordRoute: typeof AdminForgotPasswordRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
+  AdminSignupRoute: typeof AdminSignupRoute
   AdminVerifyMfaRoute: typeof AdminVerifyMfaRoute
   StudentLoginRoute: typeof StudentLoginRoute
   StudentSignupRoute: typeof StudentSignupRoute
@@ -552,12 +577,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/signup': {
+      id: '/admin/signup'
+      path: '/admin/signup'
+      fullPath: '/admin/signup'
+      preLoaderRoute: typeof AdminSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/verify-mfa': {
       id: '/admin/verify-mfa'
       path: '/admin/verify-mfa'
       fullPath: '/admin/verify-mfa'
       preLoaderRoute: typeof AdminVerifyMfaRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/student/login': {
       id: '/student/login'
@@ -651,14 +690,25 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AuthRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   AdminFirstSetupRoute: AdminFirstSetupRoute,
   AdminForgotPasswordRoute: AdminForgotPasswordRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
+  AdminSignupRoute: AdminSignupRoute,
   AdminVerifyMfaRoute: AdminVerifyMfaRoute,
   StudentLoginRoute: StudentLoginRoute,
   StudentSignupRoute: StudentSignupRoute,

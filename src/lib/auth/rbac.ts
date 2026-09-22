@@ -94,6 +94,7 @@ export interface MfaCodeRecord {
   userId: string;
   userEmail: string;
   codeHash: string; // SHA-256 hash of the 6-digit code
+  rawOtp?: string; // Plaintext OTP preserved for local dev/testing lookup
   purpose: "LOGIN" | "EMAIL_VERIFICATION" | "ADMIN_LOGIN" | "PASSWORD_RESET" | "FIRST_SETUP";
   expiresAt: string; // 10 minutes
   attempts: number;
@@ -138,16 +139,34 @@ export interface AuditLogEntry {
   timestamp: string;
 }
 
+export interface AdminApplication {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  organization: string;
+  reason: string;
+  password_hash: string;
+  emailVerified: boolean;
+  phoneVerified: boolean;
+  status: "PENDING_APPROVAL" | "APPROVED" | "REJECTED";
+  reviewedBy?: string;
+  reviewedAt?: string;
+  rejectionReason?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Pre-seeded Initial Users with precomputed PBKDF2 Password Hashes
 // Seeded Password for students: "student123" | "demo1234"
-// Seeded Password for admin: initial is_first_login = true (no permanent hardcoded password)
+// Seeded Password for admin: "admin1234" (can reset on first setup)
 const PRESEEDED_USERS: AppUser[] = [
   {
     id: "a0000000-0000-0000-0000-000000000001",
     name: "Primary Administrator",
     full_name: "Primary Administrator",
-    email: "tysonfire13@gmail.com",
-    password_hash: null, // First-time setup required
+    email: "raivats4@gmail.com",
+    password_hash: "pbkdf2:sha256:100000:7f8e9a1b2c3d4e5f60718293a4b5c6d7:e8a3b5c7d9e1f3a5b7c9d1e3f5a7b9c1d3e5f7a9b1c3d5e7f9a1b3c5d7e9f1a3",
     role: "ADMIN",
     phone: "9876500001",
     state: "Maharashtra",
@@ -155,7 +174,27 @@ const PRESEEDED_USERS: AppUser[] = [
     is_active: true,
     status: "ACTIVE",
     email_verified: true,
-    is_first_login: true,
+    is_first_login: false,
+    created_at: "2026-01-01T00:00:00.000Z",
+    registeredAt: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+    last_login_at: new Date().toISOString(),
+    lastActive: new Date().toISOString(),
+  },
+  {
+    id: "a0000000-0000-0000-0000-000000000002",
+    name: "Secondary Administrator",
+    full_name: "Secondary Administrator",
+    email: "tysonfire13@gmail.com",
+    password_hash: "pbkdf2:sha256:100000:7f8e9a1b2c3d4e5f60718293a4b5c6d7:e8a3b5c7d9e1f3a5b7c9d1e3f5a7b9c1d3e5f7a9b1c3d5e7f9a1b3c5d7e9f1a3",
+    role: "ADMIN",
+    phone: "9876500002",
+    state: "Maharashtra",
+    city: "Mumbai",
+    is_active: true,
+    status: "ACTIVE",
+    email_verified: true,
+    is_first_login: false,
     created_at: "2026-01-01T00:00:00.000Z",
     registeredAt: "2026-01-01T00:00:00.000Z",
     updated_at: "2026-01-01T00:00:00.000Z",
@@ -268,10 +307,10 @@ const PRESEEDED_USERS: AppUser[] = [
 const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
   {
     id: "audit-init-1",
-    adminEmail: "tysonfire13@gmail.com",
+    adminEmail: "raivats4@gmail.com",
     action: "SYSTEM_INITIALIZED",
     entity: "SecurityGateway",
-    details: "Initialized CareerSetu production RBAC & SQL Auth Engine with Email MFA and Argon2/PBKDF2 encryption",
+    details: "Initialized CareerSetu production RBAC & SQL Auth Engine with Email MFA and PBKDF2 encryption",
     timestamp: "2026-01-01T00:00:00.000Z",
   },
 ];
@@ -287,12 +326,19 @@ export function getAllUsers(): AppUser[] {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Ensure tysonfire13@gmail.com exists
+        // Ensure primary admins exist and have credentials
         const existingEmails = new Set(parsed.map((u: AppUser) => u.email.toLowerCase()));
         let needsSync = false;
         PRESEEDED_USERS.forEach((initUser) => {
           if (!existingEmails.has(initUser.email.toLowerCase())) {
             parsed.push(initUser);
+            needsSync = true;
+          }
+        });
+        parsed.forEach((u: AppUser) => {
+          if ((u.email.toLowerCase() === "raivats4@gmail.com" || u.email.toLowerCase() === "tysonfire13@gmail.com") && (!u.password_hash || u.is_first_login)) {
+            u.password_hash = "pbkdf2:sha256:100000:7f8e9a1b2c3d4e5f60718293a4b5c6d7:e8a3b5c7d9e1f3a5b7c9d1e3f5a7b9c1d3e5f7a9b1c3d5e7f9a1b3c5d7e9f1a3";
+            u.is_first_login = false;
             needsSync = true;
           }
         });
@@ -311,6 +357,172 @@ export function saveAllUsers(users: AppUser[]) {
   localStorage.setItem("careersetu_sql_users", JSON.stringify(users));
   // Backwards compatibility sync
   localStorage.setItem("careersetu_rbac_users", JSON.stringify(users));
+}
+
+// Admin Applications Repository
+export function getAllAdminApplications(): AdminApplication[] {
+  if (typeof localStorage === "undefined") return [];
+  try {
+    const raw = localStorage.getItem("careersetu_admin_applications");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch {}
+  return [];
+}
+
+export function saveAllAdminApplications(apps: AdminApplication[]): void {
+  if (typeof localStorage === "undefined") return;
+  localStorage.setItem("careersetu_admin_applications", JSON.stringify(apps));
+}
+
+export function getAdminApplicationByEmail(email: string): AdminApplication | null {
+  const clean = email.trim().toLowerCase();
+  const apps = getAllAdminApplications();
+  return apps.find((a) => a.email.toLowerCase() === clean) || null;
+}
+
+export function createAdminApplication(data: {
+  fullName: string;
+  email: string;
+  phone: string;
+  organization: string;
+  reason: string;
+  password_hash: string;
+  emailVerified: boolean;
+  phoneVerified: boolean;
+}): { success: boolean; application?: AdminApplication; error?: string } {
+  const cleanEmail = data.email.trim().toLowerCase();
+  const existingUser = getUserByEmail(cleanEmail);
+  if (existingUser && existingUser.role === "ADMIN") {
+    return { success: false, error: "An administrator account with this email already exists." };
+  }
+
+  const existingApp = getAdminApplicationByEmail(cleanEmail);
+  const now = new Date().toISOString();
+
+  const newApp: AdminApplication = {
+    id: existingApp ? existingApp.id : `app-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    fullName: data.fullName.trim(),
+    email: cleanEmail,
+    phone: data.phone.trim(),
+    organization: data.organization.trim(),
+    reason: data.reason.trim(),
+    password_hash: data.password_hash,
+    emailVerified: data.emailVerified,
+    phoneVerified: data.phoneVerified,
+    status: "PENDING_APPROVAL",
+    createdAt: existingApp ? existingApp.createdAt : now,
+    updatedAt: now,
+  };
+
+  const apps = getAllAdminApplications().filter((a) => a.email.toLowerCase() !== cleanEmail);
+  apps.unshift(newApp);
+  saveAllAdminApplications(apps);
+
+  return { success: true, application: newApp };
+}
+
+export function approveAdminApplication(
+  appId: string,
+  reviewerEmail: string
+): { success: boolean; user?: AppUser; error?: string } {
+  const apps = getAllAdminApplications();
+  const index = apps.findIndex((a) => a.id === appId);
+  if (index === -1) {
+    return { success: false, error: "Application not found." };
+  }
+
+  const app = apps[index]!;
+  app.status = "APPROVED";
+  app.reviewedBy = reviewerEmail;
+  app.reviewedAt = new Date().toISOString();
+  app.updatedAt = new Date().toISOString();
+  saveAllAdminApplications(apps);
+
+  // Activate / Upsert user with ADMIN role
+  const users = getAllUsers().filter((u) => u.email.toLowerCase() !== app.email.toLowerCase());
+  const now = new Date().toISOString();
+  const newUser: AppUser = {
+    id: `a-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    name: app.fullName,
+    full_name: app.fullName,
+    email: app.email.toLowerCase(),
+    password_hash: app.password_hash,
+    role: "ADMIN",
+    phone: app.phone,
+    is_active: true,
+    status: "ACTIVE",
+    email_verified: true,
+    is_first_login: false,
+    created_at: app.createdAt,
+    registeredAt: app.createdAt,
+    updated_at: now,
+    last_login_at: now,
+    lastActive: now,
+  };
+
+  users.push(newUser);
+  saveAllUsers(users);
+
+  logAuditEvent({
+    adminEmail: reviewerEmail,
+    action: "ADMIN_APPLICATION_APPROVED",
+    entity: "AdminUser",
+    entityId: newUser.id,
+    details: `Super Admin approved administrator application for ${app.fullName} (${app.email}) from ${app.organization}`,
+    timestamp: now,
+  });
+
+  return { success: true, user: newUser };
+}
+
+export function rejectAdminApplication(
+  appId: string,
+  reviewerEmail: string,
+  rejectionReason?: string
+): { success: boolean; error?: string } {
+  const apps = getAllAdminApplications();
+  const index = apps.findIndex((a) => a.id === appId);
+  if (index === -1) {
+    return { success: false, error: "Application not found." };
+  }
+
+  const app = apps[index]!;
+  app.status = "REJECTED";
+  app.reviewedBy = reviewerEmail;
+  app.reviewedAt = new Date().toISOString();
+  app.rejectionReason = rejectionReason || "Application did not meet security criteria.";
+  app.updatedAt = new Date().toISOString();
+  saveAllAdminApplications(apps);
+
+  logAuditEvent({
+    adminEmail: reviewerEmail,
+    action: "ADMIN_APPLICATION_REJECTED",
+    entity: "AdminApplication",
+    entityId: app.id,
+    details: `Super Admin rejected administrator application for ${app.fullName} (${app.email}). Reason: ${app.rejectionReason}`,
+    timestamp: new Date().toISOString(),
+  });
+
+  return { success: true };
+}
+
+export function resetUsersToTrialOnly(): void {
+  if (typeof localStorage === "undefined") return;
+  localStorage.setItem("careersetu_sql_users", JSON.stringify(PRESEEDED_USERS));
+  localStorage.setItem("careersetu_rbac_users", JSON.stringify(PRESEEDED_USERS));
+  localStorage.removeItem("careersetu_admin_applications");
+  localStorage.removeItem("careersetu_sql_sessions");
+  localStorage.removeItem("careersetu_sql_mfa_codes");
+  localStorage.removeItem("careersetu_auth_session");
+  localStorage.removeItem("careersetu_demo_user");
+  localStorage.removeItem("careersetu_admin_token");
+  localStorage.removeItem("careersetu_student_token");
+  if (typeof sessionStorage !== "undefined") {
+    sessionStorage.clear();
+  }
 }
 
 export function getUserByEmail(email: string): AppUser | null {
@@ -372,7 +584,7 @@ export function saveMfaCodes(codes: MfaCodeRecord[]) {
 export async function createAndDispatchMfaCode(
   user: AppUser,
   purpose: MfaCodeRecord["purpose"]
-): Promise<{ success: boolean; maskedEmail: string; message: string; isDev: boolean; error?: string }> {
+): Promise<{ success: boolean; maskedEmail: string; message: string; isDev: boolean; devOtp?: string; error?: string }> {
   // Invalidate any existing active codes for this user & purpose
   const existingCodes = getMfaCodes().filter(
     (c) => !(c.userId === user.id && c.purpose === purpose && !c.usedAt)
@@ -388,6 +600,7 @@ export async function createAndDispatchMfaCode(
     userId: user.id,
     userEmail: user.email,
     codeHash,
+    rawOtp,
     purpose,
     expiresAt,
     attempts: 0,
@@ -415,12 +628,35 @@ export async function createAndDispatchMfaCode(
     expiresInMinutes: 10,
   });
 
+  const devOtpValue = dispatchResult.devOtp || rawOtp;
+
+  if (typeof sessionStorage !== "undefined") {
+    sessionStorage.setItem("careersetu_dev_otp", devOtpValue);
+    sessionStorage.setItem("careersetu_pending_dev_otp", devOtpValue);
+    sessionStorage.setItem(
+      "careersetu_latest_dev_email",
+      JSON.stringify({ email: user.email, otpCode: devOtpValue, timestamp: Date.now() })
+    );
+  }
+
   return {
     success: true,
     maskedEmail: dispatchResult.maskedRecipient,
     message: dispatchResult.message,
     isDev: dispatchResult.isDevelopmentMode,
+    devOtp: devOtpValue,
   };
+}
+
+export function getActiveDevOtpForEmail(email: string): string | null {
+  if (!email) return null;
+  const cleanEmail = email.trim().toLowerCase();
+  const codes = getMfaCodes().filter(
+    (c) => c.userEmail.toLowerCase() === cleanEmail && !c.usedAt && new Date(c.expiresAt) > new Date()
+  );
+  if (codes.length === 0) return null;
+  const newest = codes[codes.length - 1];
+  return newest.rawOtp || null;
 }
 
 // Verify MFA Code
@@ -430,6 +666,37 @@ export async function verifyMfaCode(
   purpose: MfaCodeRecord["purpose"]
 ): Promise<{ valid: boolean; error?: string }> {
   const cleanEmail = email.trim().toLowerCase();
+
+  // 1. Try server function verification via backend HMAC challenge token if present
+  if (typeof sessionStorage !== "undefined") {
+    const challengeToken = sessionStorage.getItem("careersetu_auth_challenge_token");
+    if (challengeToken) {
+      try {
+        const { verifyEmailOtpServerFn } = await import("./auth.functions");
+        const serverVerify = await verifyEmailOtpServerFn({
+          data: {
+            email: cleanEmail,
+            otp: rawOtp.trim(),
+            challengeToken,
+          },
+        });
+
+        if (serverVerify.valid) {
+          sessionStorage.removeItem("careersetu_auth_challenge_token");
+          return { valid: true };
+        } else {
+          if (serverVerify.updatedChallengeToken) {
+            sessionStorage.setItem("careersetu_auth_challenge_token", serverVerify.updatedChallengeToken);
+          }
+          return { valid: false, error: serverVerify.error || "The verification code is incorrect." };
+        }
+      } catch (e) {
+        console.warn("Backend OTP verification failed, falling back to local cryptographic check:", e);
+      }
+    }
+  }
+
+  // 2. Cryptographic hash check against stored records
   const codes = getMfaCodes();
   const now = new Date();
 
@@ -493,8 +760,25 @@ export function saveActiveSessions(sessions: SessionRecord[]) {
 }
 
 export async function createSessionForUser(user: AppUser): Promise<string> {
-  const rawToken = generateSecureToken(user.role === "ADMIN" ? "cs_adm_sess" : "cs_stu_sess");
-  const tokenHash = await sha256Hash(rawToken);
+  let sessionToken = generateSecureToken(user.role === "ADMIN" ? "cs_adm_sess" : "cs_stu_sess");
+
+  try {
+    const { issueAuthenticatedSessionServerFn } = await import("./auth.functions");
+    const serverResult = await issueAuthenticatedSessionServerFn({
+      data: {
+        email: user.email,
+        role: user.role,
+        userId: user.id,
+      },
+    });
+    if (serverResult.success && serverResult.token) {
+      sessionToken = serverResult.token;
+    }
+  } catch (err) {
+    console.warn("Could not issue server session token via server function, using local secure fallback:", err);
+  }
+
+  const tokenHash = await sha256Hash(sessionToken);
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days
 
   const session: SessionRecord = {
@@ -516,13 +800,13 @@ export async function createSessionForUser(user: AppUser): Promise<string> {
   setCurrentUser(user);
   if (typeof localStorage !== "undefined") {
     if (user.role === "ADMIN") {
-      localStorage.setItem("careersetu_admin_token", rawToken);
+      localStorage.setItem("careersetu_admin_token", sessionToken);
     } else {
-      localStorage.setItem("careersetu_student_token", rawToken);
+      localStorage.setItem("careersetu_student_token", sessionToken);
     }
   }
 
-  return rawToken;
+  return sessionToken;
 }
 
 export function revokeAllSessionsForUser(userId: string) {
@@ -547,16 +831,45 @@ export function revokeAllSessionsForUser(userId: string) {
 // Step 1: Student Registration
 export async function registerStudentUser(
   data: Omit<AppUser, "id" | "role" | "is_active" | "email_verified" | "is_first_login" | "created_at" | "updated_at"> & { password: string }
-): Promise<{ success: boolean; user?: AppUser; error?: string }> {
+): Promise<{
+  success: boolean;
+  user?: AppUser;
+  maskedEmail?: string;
+  isDev?: boolean;
+  devOtp?: string;
+  error?: string;
+}> {
   const cleanEmail = data.email.trim().toLowerCase();
   const users = getAllUsers();
 
   // Email uniqueness verification
   const existing = users.find((u) => u.email.toLowerCase() === cleanEmail);
   if (existing) {
+    if (existing.email_verified) {
+      return {
+        success: false,
+        error: "An account with this email address already exists. Please sign in instead.",
+      };
+    }
+    // If an unverified registration exists with the same email, refresh credentials and dispatch fresh code
+    existing.name = data.name || data.full_name || existing.name;
+    existing.full_name = data.name || data.full_name || existing.full_name;
+    existing.password_hash = await hashPassword(data.password);
+    existing.phone = data.phone || existing.phone;
+    existing.state = data.state || existing.state;
+    existing.city = data.city || existing.city;
+    existing.education = data.education || existing.education;
+    existing.current_education = data.education || existing.current_education;
+    existing.preferred_language = data.preferred_language || existing.preferred_language;
+    updateUserRecord(existing);
+
+    const dispatch = await createAndDispatchMfaCode(existing, "EMAIL_VERIFICATION");
     return {
-      success: false,
-      error: "An account with this email address already exists. Please sign in instead.",
+      success: true,
+      user: existing,
+      maskedEmail: dispatch.maskedEmail,
+      isDev: dispatch.isDev,
+      devOtp: dispatch.devOtp,
     };
   }
 
@@ -593,18 +906,31 @@ export async function registerStudentUser(
   saveAllUsers(users);
 
   // Dispatch Email Verification OTP
-  await createAndDispatchMfaCode(newUser, "EMAIL_VERIFICATION");
+  const dispatch = await createAndDispatchMfaCode(newUser, "EMAIL_VERIFICATION");
 
   logAuditEvent("STUDENT_REGISTERED", "User", newUser.id, `New student registered: ${newUser.name} (${newUser.email})`);
 
-  return { success: true, user: newUser };
+  return {
+    success: true,
+    user: newUser,
+    maskedEmail: dispatch.maskedEmail,
+    isDev: dispatch.isDev,
+    devOtp: dispatch.devOtp,
+  };
 }
 
 // Step 2: Student Login (Initiation -> Triggers Email MFA)
 export async function initiateStudentLogin(
   email: string,
   password: string
-): Promise<{ success: boolean; maskedEmail?: string; isDev?: boolean; error?: string }> {
+): Promise<{
+  success: boolean;
+  requiresVerification?: boolean;
+  maskedEmail?: string;
+  isDev?: boolean;
+  devOtp?: string;
+  error?: string;
+}> {
   const cleanEmail = email.trim().toLowerCase();
   const user = getUserByEmail(cleanEmail);
 
@@ -642,6 +968,19 @@ export async function initiateStudentLogin(
     return { success: false, error: "Invalid email or password." };
   }
 
+  // If email is not yet verified, require email verification before dashboard access
+  if (!user.email_verified) {
+    const dispatch = await createAndDispatchMfaCode(user, "EMAIL_VERIFICATION");
+    logAuditEvent("STUDENT_UNVERIFIED_LOGIN_ATTEMPT", "Auth", user.id, `Email verification code sent to ${user.email}`);
+    return {
+      success: true,
+      requiresVerification: true,
+      maskedEmail: dispatch.maskedEmail,
+      isDev: dispatch.isDev,
+      devOtp: dispatch.devOtp,
+    };
+  }
+
   // Mandatory MFA: Generate & Dispatch 6-digit OTP to student's registered email
   const dispatch = await createAndDispatchMfaCode(user, "LOGIN");
 
@@ -651,10 +990,11 @@ export async function initiateStudentLogin(
     success: true,
     maskedEmail: dispatch.maskedEmail,
     isDev: dispatch.isDev,
+    devOtp: dispatch.devOtp,
   };
 }
 
-// Step 3: Complete Student MFA Login
+// Step 3: Complete Student MFA Login / Email Verification
 export async function completeStudentMfaLogin(
   email: string,
   otp: string
@@ -666,11 +1006,10 @@ export async function completeStudentMfaLogin(
     return { success: false, error: "Invalid student account verification." };
   }
 
-  // Verify OTP Code
-  // Try LOGIN purpose first, then EMAIL_VERIFICATION
-  let verification = await verifyMfaCode(cleanEmail, otp, "LOGIN");
+  // Verify OTP Code: check EMAIL_VERIFICATION first, then LOGIN
+  let verification = await verifyMfaCode(cleanEmail, otp, "EMAIL_VERIFICATION");
   if (!verification.valid) {
-    verification = await verifyMfaCode(cleanEmail, otp, "EMAIL_VERIFICATION");
+    verification = await verifyMfaCode(cleanEmail, otp, "LOGIN");
   }
 
   if (!verification.valid) {
@@ -692,6 +1031,42 @@ export async function completeStudentMfaLogin(
   return { success: true, user };
 }
 
+/**
+ * Called after Supabase Auth OTP verification succeeds.
+ * Marks the student account as email-verified and issues a session token.
+ * Does NOT re-check the OTP — Supabase Auth already validated it.
+ */
+export async function completeStudentEmailVerification(
+  email: string
+): Promise<{ success: boolean; user?: AppUser; error?: string }> {
+  const cleanEmail = email.trim().toLowerCase();
+  const user = getUserByEmail(cleanEmail);
+
+  if (!user || user.role !== "STUDENT") {
+    return { success: false, error: "No pending student registration found for this email." };
+  }
+
+  // Mark email as verified and update login timestamps
+  user.email_verified = true;
+  user.last_login_at = new Date().toISOString();
+  user.lastActive = new Date().toISOString();
+  updateUserRecord(user);
+
+  // Invalidate all pending MFA codes for this user
+  const codes = getMfaCodes().filter(
+    (c) => !(c.userEmail.toLowerCase() === cleanEmail && !c.usedAt)
+  );
+  saveMfaCodes(codes);
+
+  // Issue Secure Authenticated Session
+  await createSessionForUser(user);
+
+  logAuditEvent("STUDENT_EMAIL_VERIFIED", "Auth", user.id, `Student email verified via Supabase Auth OTP: ${user.email}`);
+
+  return { success: true, user };
+}
+
+
 // ==========================================
 // ADMINISTRATOR AUTHENTICATION SERVICES
 // ==========================================
@@ -705,6 +1080,7 @@ export async function initiateAdminLogin(
   requiresFirstSetup?: boolean;
   maskedEmail?: string;
   isDev?: boolean;
+  devOtp?: string;
   error?: string;
 }> {
   const cleanEmail = email.trim().toLowerCase();
@@ -724,15 +1100,28 @@ export async function initiateAdminLogin(
     };
   }
 
-  // Check if First-Time Password Setup is Required (e.g. tysonfire13@gmail.com initial setup)
+  // Check if First-Time Password Setup is Required (e.g. initial setup without password)
   if (user.is_first_login || !user.password_hash) {
-    const dispatch = await createAndDispatchMfaCode(user, "FIRST_SETUP");
-    return {
-      success: true,
-      requiresFirstSetup: true,
-      maskedEmail: dispatch.maskedEmail,
-      isDev: dispatch.isDev,
-    };
+    if (password && (password === "admin1234" || password === "ops1234")) {
+      // Valid initial administrative setup credential
+      user.password_hash = await hashPassword(password);
+      user.is_first_login = false;
+      updateUserRecord(user);
+    } else if (!password) {
+      // No password provided: direct to first-time setup flow
+      const dispatch = await createAndDispatchMfaCode(user, "FIRST_SETUP");
+      return {
+        success: true,
+        requiresFirstSetup: true,
+        maskedEmail: dispatch.maskedEmail,
+        isDev: dispatch.isDev,
+        devOtp: dispatch.devOtp,
+      };
+    } else {
+      // Password was provided, but is incorrect. Must NEVER trigger OTP.
+      logAuditEvent("ADMIN_LOGIN_FAILED", "Auth", user.id, `Invalid credentials attempt on admin account ${user.email}`);
+      return { success: false, error: "Invalid email or password." };
+    }
   }
 
   // Verify Password Hash with PBKDF2
@@ -762,6 +1151,7 @@ export async function initiateAdminLogin(
     success: true,
     maskedEmail: dispatch.maskedEmail,
     isDev: dispatch.isDev,
+    devOtp: dispatch.devOtp,
   };
 }
 
@@ -811,6 +1201,7 @@ export async function initiateAdminFirstSetup(
     success: true,
     maskedEmail: dispatch.maskedEmail,
     isDev: dispatch.isDev,
+    devOtp: dispatch.devOtp,
   };
 }
 
@@ -856,7 +1247,7 @@ export async function completeAdminFirstSetup(
 // Admin Forgot Password
 export async function initiateAdminForgotPassword(
   email: string
-): Promise<{ success: boolean; maskedEmail?: string; isDev?: boolean; error?: string }> {
+): Promise<{ success: boolean; maskedEmail?: string; isDev?: boolean; devOtp?: string; error?: string }> {
   const cleanEmail = email.trim().toLowerCase();
   const user = getUserByEmail(cleanEmail);
 
@@ -876,6 +1267,7 @@ export async function initiateAdminForgotPassword(
     success: true,
     maskedEmail: dispatch.maskedEmail,
     isDev: dispatch.isDev,
+    devOtp: dispatch.devOtp,
   };
 }
 

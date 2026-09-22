@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
+import { verifyAdminAccessServerFn } from "@/lib/auth/auth.functions";
 import {
   Activity,
   AlertTriangle,
@@ -77,6 +78,10 @@ import {
   getAuditLogs,
   AppUser,
   ContentStatus,
+  getAllAdminApplications,
+  approveAdminApplication,
+  rejectAdminApplication,
+  AdminApplication,
 } from "@/lib/auth/rbac";
 import {
   getManagedCareers,
@@ -113,6 +118,17 @@ import {
 import { getCompletedAssessments } from "@/lib/store/careersetu-store";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  beforeLoad: async () => {
+    let token = "";
+    if (typeof localStorage !== "undefined") {
+      token = localStorage.getItem("careersetu_admin_token") || "";
+    }
+    const verifyResult = await verifyAdminAccessServerFn({ data: { token } });
+    if (!verifyResult.authorized) {
+      throw redirect({ to: "/admin/login" });
+    }
+    return { adminUser: verifyResult.user };
+  },
   head: () => ({
     meta: [
       { title: "CareerSetu Admin — Platform Management Console" },
@@ -144,12 +160,23 @@ function AdminManagementConsole() {
   const [skills, setSkills] = useState(getSkills());
   const [broadcasts, setBroadcasts] = useState(getBroadcastNotifications());
   const [auditLogs, setAuditLogs] = useState(getAuditLogs());
+  const [adminApplications, setAdminApplications] = useState<AdminApplication[]>(getAllAdminApplications());
 
   // Search & Filter States
   const [userSearch, setUserSearch] = useState("");
   const [userRoleFilter, setUserRoleFilter] = useState<string>("ALL");
   const [careerSearch, setCareerSearch] = useState("");
   const [examSearch, setExamSearch] = useState("");
+  const [appSearch, setAppSearch] = useState("");
+  const [appStatusFilter, setAppStatusFilter] = useState("ALL");
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [rejectingAppId, setRejectingAppId] = useState("");
+  const [rejectionReason, setRejectionReason] = useState("");
+
+  const pendingAppsCount = useMemo(
+    () => adminApplications.filter((a) => a.status === "PENDING_APPROVAL").length,
+    [adminApplications]
+  );
 
   // Modals & Editing Entities
   const [selectedUser, setSelectedUser] = useState<AppUser | null>(null);
@@ -218,25 +245,11 @@ function AdminManagementConsole() {
           </Button>
           <Button
             variant="outline"
-            onClick={() => {
-              // Quick demo switch for testing evaluator
-              const adminUser: AppUser = {
-                id: "admin-evaluator",
-                email: "admin@careersetu.ai",
-                full_name: "Tushar Devendra (Lead Admin)",
-                role: "ADMIN",
-                status: "ACTIVE",
-                registeredAt: "2026-01-01T00:00:00.000Z",
-                lastActive: new Date().toISOString(),
-              };
-              localStorage.setItem("careersetu_demo_user", JSON.stringify(adminUser));
-              toast.success("Switched to Administrator role for review!");
-              window.location.reload();
-            }}
-            className="rounded-2xl h-11 px-5 border-amber-500/30 text-amber-500 hover:bg-amber-500/10 cursor-pointer"
+            onClick={() => navigate({ to: "/admin/login" })}
+            className="rounded-2xl h-11 px-5 border-border hover:bg-accent/50 cursor-pointer"
           >
-            <Lock className="size-4 mr-2" />
-            Switch to Admin Role (Demo Review)
+            <Lock className="size-4 mr-2 text-primary" />
+            Sign In as Administrator
           </Button>
         </div>
       </div>
@@ -294,6 +307,59 @@ function AdminManagementConsole() {
       setUsers(getAllUsers());
       setAuditLogs(getAuditLogs());
       toast.success(`User status changed to ${updated.status}`);
+    }
+  };
+
+  // Admin Applications Actions & Filtering
+  const filteredApplications = useMemo(() => {
+    return adminApplications.filter((app) => {
+      const matchSearch =
+        app.fullName.toLowerCase().includes(appSearch.toLowerCase()) ||
+        app.email.toLowerCase().includes(appSearch.toLowerCase()) ||
+        app.organization.toLowerCase().includes(appSearch.toLowerCase());
+      const matchStatus = appStatusFilter === "ALL" || app.status === appStatusFilter;
+      return matchSearch && matchStatus;
+    });
+  }, [adminApplications, appSearch, appStatusFilter]);
+
+  const handleApproveApplication = (appId: string) => {
+    const reviewer = currentUser?.email || "raivats4@gmail.com";
+    const res = approveAdminApplication(appId, reviewer);
+    if (res.success) {
+      setAdminApplications(getAllAdminApplications());
+      setUsers(getAllUsers());
+      setAuditLogs(getAuditLogs());
+      toast.success(
+        `Application approved! ${res.user?.full_name} (${res.user?.email}) has been granted Admin permissions.`
+      );
+    } else {
+      toast.error(res.error || "Failed to approve application.");
+    }
+  };
+
+  const handleOpenRejectModal = (appId: string) => {
+    setRejectingAppId(appId);
+    setRejectionReason("");
+    setRejectModalOpen(true);
+  };
+
+  const handleConfirmRejectApplication = () => {
+    if (!rejectingAppId) return;
+    const reviewer = currentUser?.email || "raivats4@gmail.com";
+    const res = rejectAdminApplication(
+      rejectingAppId,
+      reviewer,
+      rejectionReason.trim() || "Does not meet administrative requirements."
+    );
+    if (res.success) {
+      setAdminApplications(getAllAdminApplications());
+      setAuditLogs(getAuditLogs());
+      setRejectModalOpen(false);
+      setRejectingAppId("");
+      setRejectionReason("");
+      toast.info("Application rejected.");
+    } else {
+      toast.error(res.error || "Failed to reject application.");
     }
   };
 
@@ -622,6 +688,18 @@ function AdminManagementConsole() {
           <TabsTrigger value="audit" className="rounded-xl text-xs font-semibold px-3.5 py-2 gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <History className="size-3.5" />
             Audit Trail
+          </TabsTrigger>
+          <TabsTrigger
+            value="applications"
+            className="rounded-xl text-xs font-semibold px-3.5 py-2 gap-1.5 data-[state=active]:bg-amber-500 data-[state=active]:text-black"
+          >
+            <ShieldAlert className="size-3.5 text-amber-500" />
+            Admin Applications
+            {pendingAppsCount > 0 && (
+              <span className="ml-1 px-1.5 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-extrabold shadow-sm">
+                {pendingAppsCount}
+              </span>
+            )}
           </TabsTrigger>
         </TabsList>
 
@@ -1349,6 +1427,244 @@ function AdminManagementConsole() {
             </div>
           </Card>
         </TabsContent>
+
+        {/* 10. ADMIN APPLICATIONS TAB */}
+        <TabsContent value="applications" className="space-y-4 mt-0">
+          <Card className="glass rounded-3xl p-5 border-border shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border/70">
+              <div className="flex items-center gap-3">
+                <div className="size-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-500 flex items-center justify-center shrink-0">
+                  <ShieldAlert className="size-5" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold font-display text-foreground flex items-center gap-2">
+                    Admin Access Applications
+                    {pendingAppsCount > 0 && (
+                      <Badge className="bg-amber-500 text-black font-extrabold text-[10px]">
+                        {pendingAppsCount} Pending
+                      </Badge>
+                    )}
+                  </h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Review and authorize administrator accounts. Only active Super Admins can grant admin privileges.
+                  </p>
+                </div>
+              </div>
+
+              {/* Status Filter Badges */}
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant={appStatusFilter === "ALL" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setAppStatusFilter("ALL")}
+                  className="rounded-xl h-8 text-xs cursor-pointer"
+                >
+                  All ({adminApplications.length})
+                </Button>
+                <Button
+                  variant={appStatusFilter === "PENDING_APPROVAL" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setAppStatusFilter("PENDING_APPROVAL")}
+                  className="rounded-xl h-8 text-xs cursor-pointer border-amber-500/30 text-amber-500 data-[variant=default]:bg-amber-500 data-[variant=default]:text-black"
+                >
+                  Pending ({pendingAppsCount})
+                </Button>
+                <Button
+                  variant={appStatusFilter === "APPROVED" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setAppStatusFilter("APPROVED")}
+                  className="rounded-xl h-8 text-xs cursor-pointer border-emerald-500/30 text-emerald-500 data-[variant=default]:bg-emerald-600"
+                >
+                  Approved ({adminApplications.filter((a) => a.status === "APPROVED").length})
+                </Button>
+                <Button
+                  variant={appStatusFilter === "REJECTED" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setAppStatusFilter("REJECTED")}
+                  className="rounded-xl h-8 text-xs cursor-pointer border-rose-500/30 text-rose-500 data-[variant=default]:bg-rose-600"
+                >
+                  Rejected ({adminApplications.filter((a) => a.status === "REJECTED").length})
+                </Button>
+              </div>
+            </div>
+
+            {/* Search Bar */}
+            <div className="pt-4 pb-2">
+              <div className="relative">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search applications by name, email, or institution..."
+                  value={appSearch}
+                  onChange={(e) => setAppSearch(e.target.value)}
+                  className="pl-10 h-10 rounded-xl bg-background/60"
+                />
+              </div>
+            </div>
+
+            {/* Applications Cards List */}
+            <div className="space-y-3 mt-3">
+              {filteredApplications.length === 0 ? (
+                <div className="text-center py-12 rounded-2xl bg-muted/20 border border-border/60">
+                  <Shield className="size-10 mx-auto text-muted-foreground/50 mb-2" />
+                  <p className="text-sm font-semibold text-foreground">No applications found</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {adminApplications.length === 0
+                      ? "No administrator access requests have been submitted yet."
+                      : "No applications match your current search and filter criteria."}
+                  </p>
+                </div>
+              ) : (
+                filteredApplications.map((app) => (
+                  <div
+                    key={app.id}
+                    className={`p-4 sm:p-5 rounded-2xl border transition-all ${
+                      app.status === "PENDING_APPROVAL"
+                        ? "bg-amber-500/5 border-amber-500/30 shadow-xs"
+                        : app.status === "APPROVED"
+                        ? "bg-emerald-500/5 border-emerald-500/25"
+                        : "bg-muted/30 border-border/70 opacity-80"
+                    }`}
+                  >
+                    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                      {/* Left: Applicant Details */}
+                      <div className="space-y-2 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-bold text-sm sm:text-base text-foreground">
+                            {app.fullName}
+                          </span>
+                          <span className="text-xs text-muted-foreground">({app.email})</span>
+                          {app.status === "PENDING_APPROVAL" && (
+                            <Badge className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold">
+                              ⏳ Pending Review
+                            </Badge>
+                          )}
+                          {app.status === "APPROVED" && (
+                            <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
+                              ✓ Approved Admin
+                            </Badge>
+                          )}
+                          {app.status === "REJECTED" && (
+                            <Badge className="bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold">
+                              ✕ Rejected
+                            </Badge>
+                          )}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Building2 className="size-3 text-amber-500" />
+                            <strong>Organization:</strong> {app.organization}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Phone className="size-3 text-emerald-500" />
+                            <strong>Phone:</strong> {app.phone}
+                          </span>
+                          <span className="flex items-center gap-1 text-[11px] font-mono">
+                            <Clock className="size-3" />
+                            {new Date(app.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+
+                        {/* Verification Badges */}
+                        <div className="flex items-center gap-2 pt-1">
+                          <span
+                            className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                              app.emailVerified
+                                ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                                : "bg-muted text-muted-foreground border border-border"
+                            }`}
+                          >
+                            <CheckCircle2 className="size-3" />
+                            Email Verified
+                          </span>
+                          <span
+                            className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                              app.phoneVerified
+                                ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                                : "bg-muted text-muted-foreground border border-border"
+                            }`}
+                          >
+                            <CheckCircle2 className="size-3" />
+                            Phone Verified
+                          </span>
+                        </div>
+
+                        {/* Reason Box */}
+                        <div className="mt-2 p-3 rounded-xl bg-background/60 border border-border/70 text-xs">
+                          <span className="font-semibold text-muted-foreground block mb-0.5">
+                            Reason for Access Request:
+                          </span>
+                          <p className="text-foreground leading-relaxed italic">
+                            "{app.reason}"
+                          </p>
+                        </div>
+
+                        {/* Audit Trail info */}
+                        {app.reviewedBy && (
+                          <div className="text-[11px] text-muted-foreground flex flex-wrap gap-2 pt-1">
+                            <span>
+                              Reviewed by: <strong className="text-foreground">{app.reviewedBy}</strong>
+                            </span>
+                            {app.reviewedAt && (
+                              <span>• on {new Date(app.reviewedAt).toLocaleString()}</span>
+                            )}
+                            {app.rejectionReason && (
+                              <span className="text-rose-400">
+                                • Reason: "{app.rejectionReason}"
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Right: Actions */}
+                      <div className="flex sm:flex-col items-center sm:items-end gap-2 shrink-0">
+                        {app.status === "PENDING_APPROVAL" && (
+                          <>
+                            <Button
+                              size="sm"
+                              onClick={() => handleApproveApplication(app.id)}
+                              className="rounded-xl h-9 px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer"
+                            >
+                              <CheckCircle2 className="size-3.5" />
+                              Approve Admin
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleOpenRejectModal(app.id)}
+                              className="rounded-xl h-9 px-3.5 border-rose-500/40 text-rose-400 hover:bg-rose-500/10 text-xs gap-1.5 cursor-pointer"
+                            >
+                              <X className="size-3.5" />
+                              Reject
+                            </Button>
+                          </>
+                        )}
+                        {app.status === "APPROVED" && (
+                          <div className="flex items-center gap-1 text-xs text-emerald-500 font-semibold px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                            <UserCheck className="size-3.5" />
+                            Active Admin
+                          </div>
+                        )}
+                        {app.status === "REJECTED" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleApproveApplication(app.id)}
+                            className="rounded-xl h-8 px-3 border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 text-xs gap-1 cursor-pointer"
+                          >
+                            <RefreshCw className="size-3" />
+                            Re-evaluate & Approve
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       {/* USER INSPECT MODAL */}
@@ -1872,6 +2188,52 @@ function AdminManagementConsole() {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* REJECT APPLICATION CONFIRMATION MODAL */}
+      <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
+        <DialogContent className="max-w-md rounded-3xl p-6">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold font-display text-rose-500 flex items-center gap-2">
+              <ShieldAlert className="size-4" /> Reject Administrator Application
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Provide a rationale for why this application is not approved. The applicant will see this status upon enquiry.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div>
+              <label className="text-xs font-semibold block mb-1">Rejection Reason</label>
+              <textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="e.g. Unverified institutional affiliation, insufficient authorization details..."
+                rows={3}
+                className="w-full p-3 text-xs rounded-xl border border-border bg-card resize-none focus:outline-none focus:border-rose-500/60"
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex justify-end gap-2 pt-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setRejectModalOpen(false);
+                setRejectingAppId("");
+              }}
+              className="rounded-xl text-xs cursor-pointer"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleConfirmRejectApplication}
+              className="bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs cursor-pointer"
+            >
+              Confirm Rejection
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
