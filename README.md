@@ -4,7 +4,7 @@
 
 # 🎓 CareerSetu AI — AI-Powered Career & Government Exam Guidance Platform
 
-### 🚀 **Live Production Deployment:** [https://careersetu-psi.vercel.app/](https://careersetu-psi.vercel.app/)
+### 🚀 **Click on this link to view our live website:** [https://careersetu-psi.vercel.app/](https://careersetu-psi.vercel.app/)
 
 [![Live Demo](https://img.shields.io/badge/🌐_Live_Deployment-careersetu--psi.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://careersetu-psi.vercel.app/)
 [![React 19](https://img.shields.io/badge/React-19.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
