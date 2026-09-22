@@ -4,12 +4,15 @@
 
 # 🎓 CareerSetu AI — AI-Powered Career & Government Exam Guidance Platform
 
+### 🚀 **Live Production Deployment:** [https://careersetu-psi.vercel.app/](https://careersetu-psi.vercel.app/)
+
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Deployment-careersetu--psi.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://careersetu-psi.vercel.app/)
 [![React 19](https://img.shields.io/badge/React-19.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.2-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![TanStack Start](https://img.shields.io/badge/TanStack-Start_%26_Router-FF4154?style=for-the-badge&logo=react-query&logoColor=white)](https://tanstack.com/)
-[![Vercel Deployed](https://img.shields.io/badge/Vercel-Edge_Serverless-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
+[![Vercel Deployed](https://img.shields.io/badge/Vercel-Edge_Serverless-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://careersetu-psi.vercel.app/)
 [![Supabase](https://img.shields.io/badge/Database-Supabase_PostgreSQL-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 [![Tests Passing](https://img.shields.io/badge/Tests-65%20Manual%20%7C%2068%20Automated-2ea44f?style=for-the-badge&logo=githubactions&logoColor=white)](#-testing--quality-assurance)
 [![SUS Score](https://img.shields.io/badge/SUS_Usability-88.5%20(Grade%20A%2B)-brightgreen?style=for-the-badge)](#-empirical-usability-metrics)
