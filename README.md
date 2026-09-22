@@ -28,10 +28,10 @@
 
 | Role | Name | SAP ID | Responsibilities & Contribution Scope |
 | :--- | :--- | :---: | :--- |
-| 👨‍💻 **Project Developer** | **Tushar Devendra** | `53013240081` | Full-Stack Platform Architecture, TanStack SSR/Router Integration, PBKDF2 Crypto & MFA Auth Subsystems, UI/UX Design System (OKLCH Tokens & Atomic UI), and Deployment Automation |
-| 👑 **Project Owner** | **Nisha Sarvaiya** | `53013240082` | Product Vision & Strategy, Student Stakeholder Engagement, Academic Curriculum Alignment, Feature Prioritization, and Milestone Governance |
-| 🧪 **Tester** | **Nishith Vora** | `53013240080` | QA Lead, Test Case Design (65 End-to-End Manual Test Scenarios), Automated UI Regression Suites, Cross-Browser / Multi-Device Responsiveness, and Vulnerability Assessment |
-| 📑 **Documentation** | **Raivat Shah** | `53013240078` | Academic & Technical Documentation Suite Author, SRS & Mathematical Formulations, Software Project Management (SPM) Alignment, User Manuals, and Jira Epics Tracing |
+|  **Project Developer** | **Tushar Devendra** | `53013240081` | Full-Stack Platform Architecture, TanStack SSR/Router Integration, PBKDF2 Crypto & MFA Auth Subsystems, UI/UX Design System (OKLCH Tokens & Atomic UI), and Deployment Automation |
+|  **Project Owner** | **Nisha Sarvaiya** | `53013240082` | Product Vision & Strategy, Student Stakeholder Engagement, Academic Curriculum Alignment, Feature Prioritization, and Milestone Governance |
+|  **Tester** | **Nishith Vora** | `53013240080` | QA Lead, Test Case Design (65 End-to-End Manual Test Scenarios), Automated UI Regression Suites, Cross-Browser / Multi-Device Responsiveness, and Vulnerability Assessment |
+|  **Documentation** | **Raivat Shah** | `53013240078` | Academic & Technical Documentation Suite Author, SRS & Mathematical Formulations, Software Project Management (SPM) Alignment, User Manuals, and Jira Epics Tracing |
 
 ---
 
